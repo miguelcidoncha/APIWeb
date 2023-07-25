@@ -10,7 +10,7 @@ namespace Entities
         public int ProductId { get; set; } // Внешний ключ для связи с продуктом
 
         // Навигационное свойство для связи с продуктом
-        //[ForeignKey("ProductId")]
+        [ForeignKey("ProductId")]
 
         [JsonIgnore]
         public ProductItem Product { get; set; }

@@ -30,19 +30,12 @@ namespace Data
                 entity.ToTable("Orders"); // Назначаем имя таблицы "Orders"
                 entity.HasKey(o => o.Id);
                 // Задаем связь с таблицей "Products" по идентификатору продукта
-                //entity.HasOne(o => o.Product)
-                //      .WithMany(p => p.Orders)
-                //      .HasForeignKey(o => o.ProductId);
 
-                entity.HasOne<ProductItem>()
-                     .WithMany()
-                     .HasForeignKey(o => o.ProductId);
+                entity.HasOne(o => o.Product)
+                      .WithMany(p => p.Orders)
+                      .HasForeignKey(o => o.ProductId)
+                      .OnDelete(DeleteBehavior.NoAction); // Задаем правило удаления NO ACTION
             });
-
-           
-            //entity.HasOne<ProductItem>()
-            //     .WithMany()
-            //     .HasForeignKey(o => o.ProductId);
         }
 
         // Метод для удаления записи из таблицы "Products" по идентификатору
@@ -56,6 +49,26 @@ namespace Data
             {
                 // Удаляем запись из контекста
                 Products.Remove(productToRemove);
+
+                // Сохраняем изменения в базе данных
+                SaveChanges();
+                return true; // Успешное удаление
+            }
+
+            return false; // Запись с указанным идентификатором не найдена
+        }
+
+        // Метод для удаления записи из таблицы "Orders" по идентификатору
+        public bool RemoveOrderById(int orderId)
+        {
+            // Находим запись, которую хотим удалить, по ее идентификатору
+            var orderToRemove = Orders.FirstOrDefault(p => p.Id == orderId);
+
+            // Проверяем, была ли найдена запись
+            if (orderToRemove != null)
+            {
+                // Удаляем запись из контекста
+                Orders.Remove(orderToRemove);
 
                 // Сохраняем изменения в базе данных
                 SaveChanges();

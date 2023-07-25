@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(ServiceContext))]
-    [Migration("20230725084658_NewMigration3")]
-    partial class NewMigration3
+    [Migration("20230725140249_AddedDeleteOrder")]
+    partial class AddedDeleteOrder
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,17 +39,12 @@ namespace Data.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductId1")
-                        .HasColumnType("int");
-
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("ProductId1");
 
                     b.ToTable("Orders", (string)null);
                 });
@@ -80,16 +75,10 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Entities.OrderItem", b =>
                 {
-                    b.HasOne("Entities.ProductItem", null)
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Entities.ProductItem", "Product")
                         .WithMany("Orders")
-                        .HasForeignKey("ProductId1")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Product");

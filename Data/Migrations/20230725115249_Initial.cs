@@ -5,15 +5,25 @@
 namespace Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddOrderTable : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "productName",
-                table: "Products",
-                newName: "ProductName");
+            migrationBuilder.CreateTable(
+                name: "Products",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    Manufacturer = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "Orders",
@@ -32,8 +42,7 @@ namespace Data.Migrations
                         name: "FK_Orders_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -48,10 +57,8 @@ namespace Data.Migrations
             migrationBuilder.DropTable(
                 name: "Orders");
 
-            migrationBuilder.RenameColumn(
-                name: "ProductName",
-                table: "Products",
-                newName: "productName");
+            migrationBuilder.DropTable(
+                name: "Products");
         }
     }
 }
