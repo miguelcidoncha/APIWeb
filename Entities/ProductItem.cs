@@ -9,6 +9,15 @@ namespace Entities
     public class ProductItem
     {
         public int Id { get; set; }
-        public string productName { get; set; }    
+        public string name { get; set; }
+        public string brand { get; set; }
+        public string sneakerModel { get; set; }
+        public string typeOfFootwear { get; set; }
+        public string recipient { get; set; }
+        public string size { get; set; } 
+        public string color { get; set; }
+        public string stock { get; set; }
+        public string price { get; set; }
+        public string discount { get; set; }
     }
 }
