@@ -16,7 +16,8 @@ namespace Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    productName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    productName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false) // Добавляем поле для количества
                 },
                 constraints: table =>
                 {
