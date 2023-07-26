@@ -18,9 +18,6 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddDbContext<ServiceContext>(
         options => options.UseSqlServer("name=ConnectionStrings:ServiceContext"));
 
-builder.Services.AddDbContext<ServiceContext1>(
-        options => options.UseSqlServer("name=ConnectionStrings:ServiceContext1"));
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

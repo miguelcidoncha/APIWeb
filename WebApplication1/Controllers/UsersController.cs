@@ -10,37 +10,38 @@ namespace WebApplication1.Controllers
 {
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     [Route("[controller]/[action]")]
-    public class ProductController : ControllerBase
+    public class UsersController : ControllerBase
     {
 
-        private readonly IProductService _productService;
+        private readonly IUserService _userService;
         private readonly ServiceContext _serviceContext;
 
-        public ProductController(IProductService productService, ServiceContext serviceContext)
+        public UsersController(IUserService userService, ServiceContext serviceContext)
         {
-            _productService = productService;
+            _userService = userService;
             _serviceContext = serviceContext;
 
         }
 
-        [HttpPost(Name = "InsertProduct")]
-        public int Post([FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] ProductItem productItem)
+        [HttpPost(Name = "insertUsers")]
+        public int Post([FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] UserItem userItem)
         {
             var seletedUser = _serviceContext.Set<UserItem>()
                                .Where(u => u.NombreUsuario == userNombreUsuario
                                     && u.Contraseña == userContraseña
                                     && u.Rol == 1)
                                 .FirstOrDefault();
-
-            if (seletedUser != null)
+            if ( seletedUser != null)
             {
-                return _productService.insertProduct(productItem);
+                return _userService.insertUsers(userItem);
             }
             else
             {
                 throw new InvalidCredentialException("El ususario no esta autorizado o no existe");
             }
         }
+
+
 
     }
 }
