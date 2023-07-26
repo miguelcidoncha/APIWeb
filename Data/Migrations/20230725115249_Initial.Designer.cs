@@ -3,6 +3,7 @@ using Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(ServiceContext))]
-    partial class ServiceContextModelSnapshot : ModelSnapshot
+    [Migration("20230725115249_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -70,58 +73,6 @@ namespace Data.Migrations
                     b.ToTable("Products", (string)null);
                 });
 
-
-            modelBuilder.Entity("Entities.RollItem", b =>
-                {
-                    b.Property<int>("IdRoll")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdRoll"));
-
-                    b.Property<string>("RollName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("IdRoll");
-
-                    b.ToTable("RollUser", (string)null);
-                });
-
-            modelBuilder.Entity("Entities.UserItem", b =>
-                {
-                    b.Property<int>("IdUsuario")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdUsuario"));
-
-                    b.Property<string>("Contraseña")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NombreUsuario")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Rol")
-                        .HasColumnType("int");
-
-                    b.HasKey("IdUsuario");
-
-                    b.HasIndex("Rol");
-
-                    b.ToTable("Users", (string)null);
-                });
-
-            modelBuilder.Entity("Entities.UserItem", b =>
-                {
-                    b.HasOne("Entities.RollItem", null)
-                        .WithMany()
-                        .HasForeignKey("Rol")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
             modelBuilder.Entity("Entities.OrderItem", b =>
                 {
                     b.HasOne("Entities.ProductItem", "Product")
@@ -136,7 +87,6 @@ namespace Data.Migrations
             modelBuilder.Entity("Entities.ProductItem", b =>
                 {
                     b.Navigation("Orders");
-
                 });
 #pragma warning restore 612, 618
         }
