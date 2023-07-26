@@ -132,7 +132,7 @@ namespace WebApplication1.Controllers
                 // Журналирование действия удаления заказа
                 _serviceContext.AuditLogs.Add(new AuditLog
                 {
-                    Action = "Update",
+                    Action = "Delete",
                     TableName = "Orders",
                     RecordId = orderId,
                     Timestamp = DateTime.Now,

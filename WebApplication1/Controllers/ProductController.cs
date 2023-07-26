@@ -127,7 +127,7 @@ namespace WebApplication1.Controllers
                     // Журналирование действия удаления продукта
                     _serviceContext.AuditLogs.Add(new AuditLog
                     {
-                        Action = "Update",
+                        Action = "Delete",
                         TableName = "Products",
                         RecordId = productId,
                         Timestamp = DateTime.Now,
