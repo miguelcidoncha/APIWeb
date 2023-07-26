@@ -19,40 +19,51 @@ namespace Data
         public DbSet<UserItem> Users { get; set; }
         public DbSet<RollItem> RollUser { get; set; }
         public DbSet<OrderItem> Orders { get; set; } //Добавляем DbSet для заказов
+        public DbSet<AuditLog> AuditLogs { get; set; } //Добавляем DbSet для логирования
 
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<ProductItem>(entity =>
+            builder.Entity<ProductItem>(entity =>         // Конфигурация модели ProductItem
             {
                 entity.ToTable("Products");
             });
 
-
-            builder.Entity<UserItem>(entity =>
+            builder.Entity<UserItem>(entity =>             // Задаем связь с таблицей "Users" по идентификатору IdUsuario    
             {
                 entity.ToTable("Users");
                 entity.HasKey(u => u.IdUsuario);
                 entity.HasOne<RollItem>().WithMany().HasForeignKey(u => u.Rol);
             });
 
-            builder.Entity<RollItem>(entity =>
+            builder.Entity<RollItem>(entity =>              // Конфигурация модели RollItem
             {
                 entity.ToTable("RollUser");
                 entity.HasKey(u => u.IdRoll);
             });
             
-            builder.Entity<OrderItem>(entity =>
+            builder.Entity<OrderItem>(entity =>             // Конфигурация модели OrderItem
             {
-                entity.ToTable("Orders"); // Назначаем имя таблицы "Orders"
-                entity.HasKey(o => o.Id);
-                // Задаем связь с таблицей "Products" по идентификатору продукта
-
+                entity.ToTable("Orders");
+                entity.HasKey(o => o.Id);                   // Задаем связь с таблицей "Products" по идентификатору продукта
                 entity.HasOne(o => o.Product)
                       .WithMany(p => p.Orders)
                       .HasForeignKey(o => o.ProductId)
                       .OnDelete(DeleteBehavior.NoAction); // Задаем правило удаления NO ACTION
             });
+
+            builder.Entity<AuditLog>(entity =>              // Конфигурация модели AuditLog
+            {
+                entity.ToTable("AuditLog");
+                entity.HasKey(a => a.Id);
+                // Устанавливаем внешний ключ для связи с таблицей Users
+                entity.HasOne(a => a.User)
+                      .WithMany(u => u.AuditLogs)
+                      .HasForeignKey(a => a.UserId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            base.OnModelCreating(builder);
         }
         
 
@@ -96,6 +107,8 @@ namespace Data
             return false; // Запись с указанным идентификатором не найдена
 
         }
+
+
     }
     public class ServiceContextFactory : IDesignTimeDbContextFactory<ServiceContext>
     {

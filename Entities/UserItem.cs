@@ -18,6 +18,10 @@ namespace Entities
         public string Contraseña { get; set; }
 
         [Required]
+        public string Email { get; set; }
+
+        [Required]
         public int Rol { get; set; }
+        public List<AuditLog> AuditLogs { get; set; }
     }
 }

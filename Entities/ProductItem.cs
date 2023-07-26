@@ -15,8 +15,8 @@ namespace Entities
         // Навигационное свойство для связи с заказами
         [JsonIgnore]
         public ICollection<OrderItem> Orders { get; set; }
-        public int Quantity { get; set; } // Добавленное поле для количества продуктов
-        public string Manufacturer { get; set; } // Новое свойство для производителя
+        public int Quantity { get; set; }
+        public string Manufacturer { get; set; }
     }
 
 }

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Web.Http.Cors;
 using WebApplication1.IServices;
 using WebApplication1.Services;
+using System.Linq;
 
 namespace WebApplication1.Controllers
 {
@@ -36,6 +37,7 @@ namespace WebApplication1.Controllers
 
             if (seletedUser != null)
             {
+
                 return _productService.insertProduct(productItem);
             }
             else
@@ -75,6 +77,15 @@ namespace WebApplication1.Controllers
 
                 if (product != null)
                 {
+                    // Журналирование действия обновления продукта
+                    _serviceContext.AuditLogs.Add(new AuditLog
+                    {
+                        Action = "Update",
+                        TableName = "Products",
+                        RecordId = productId,
+                        Timestamp = DateTime.Now,
+                        UserId = seletedUser.IdUsuario // Добавляем информацию о UserId в AuditLog
+                    });
                     // Обновляем значения полей продукта с помощью данных из updatedProduct
                     product.ProductName = updatedProduct.ProductName;
                     product.Quantity = updatedProduct.Quantity;
@@ -113,6 +124,15 @@ namespace WebApplication1.Controllers
 
                 if (product != null)
                 {
+                    // Журналирование действия удаления продукта
+                    _serviceContext.AuditLogs.Add(new AuditLog
+                    {
+                        Action = "Update",
+                        TableName = "Products",
+                        RecordId = productId,
+                        Timestamp = DateTime.Now,
+                        UserId = seletedUser.IdUsuario // Добавляем информацию о UserId в AuditLog
+                    });
                     // Вызываем метод для удаления продукта по идентификатору
                     bool isDeleted = _serviceContext.RemoveProductById(productId);
 
@@ -135,187 +155,5 @@ namespace WebApplication1.Controllers
                 return Unauthorized("El usuario no está autorizado o no existe");
             }
         }
-
     }
-
-    public class OrderController : ControllerBase
-    {
-        private readonly IOrderService _orderService;
-        private readonly ServiceContext _serviceContext;
-
-        public OrderController(IOrderService orderService, ServiceContext serviceContext)
-        {
-            _orderService = orderService;
-            _serviceContext = serviceContext;
-        }
-
-        // Añadir pedidos
-        [HttpPost("Order/Post", Name = "InsertOrder")]
-        public IActionResult CreateOrder(int productId, [FromBody] OrderItem orderItem, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
-        {
-            var seletedUser = _serviceContext.Set<UserItem>()
-                                   .Where(u => u.NombreUsuario == userNombreUsuario
-                                        && u.Contraseña == userContraseña
-                                        && u.Rol == 1)
-                                    .FirstOrDefault();
-
-            if (seletedUser != null)
-            {
-                if (orderItem != null)
-                {
-                    var newOrderItem = new OrderItem();
-                    newOrderItem.ProductId = productId;
-                    newOrderItem.CustomerName = orderItem.CustomerName;
-                    // Просто устанавливаем ProductId, не создавая новый экземпляр OrderItem
-                    _serviceContext.Orders.Add(newOrderItem);
-                    _serviceContext.SaveChanges();
-
-                    return Ok("El pedido se ha creado correctamente.");
-                }
-                else
-                {
-                    return NotFound("No se ha encontrado el pedido con el identificador especificado.");
-                }
-            }
-            else
-            {
-                return Unauthorized("El usuario no está autorizado o no existe");
-            }
-        }
-
-        //recuperación de pedidos de la tabla Ordens по Id
-        [HttpGet("Order/Get", Name = "GetOrder")]
-        public IActionResult Get(int orderId)
-        {
-            var order = _serviceContext.Orders.FirstOrDefault(p => p.Id == orderId);
-            if (order != null)
-            {
-                return Ok(order);
-            }
-            else
-            {
-                return NotFound("No se ha encontrado el pedido con el identificador especificado.");
-            }
-        }
-        ////modificar registros de la tabla Orders
-        //[HttpPut("Order/UpdateOrder", Name = "UpdateOrder")]
-        //public IActionResult UpdateOrder(int orderId, [FromBody] OrderItem updatedOrder)
-        //{
-        //    var order = _serviceContext.Orders.FirstOrDefault(o => o.Id == orderId);
-
-        //    if (order != null)
-        //    {
-        //        // Actualización de los valores de los campos del pedido utilizando datos del updatedOrder
-        //        order.CustomerName = updatedOrder.CustomerName;
-        //        order.Quantity = updatedOrder.Quantity;
-
-        //        _serviceContext.SaveChanges();
-
-        //        return Ok("El pedido se ha actualizado correctamente.");
-        //    }
-        //    else
-        //    {
-        //        return NotFound("No se ha encontrado el pedido con el identificador especificado.");
-        //    }
-        //}
-        // Modificar registros de la tabla Orders
-        [HttpPut("Order/UpdateOrder", Name = "UpdateOrder")]
-        public IActionResult UpdateOrder(int orderId, [FromBody] OrderItem updatedOrder, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
-        {
-            var seletedUser = _serviceContext.Set<UserItem>()
-                                   .Where(u => u.NombreUsuario == userNombreUsuario
-                                        && u.Contraseña == userContraseña
-                                        && u.Rol == 1)
-                                    .FirstOrDefault();
-
-            if (seletedUser != null)
-            {
-                var order = _serviceContext.Orders.FirstOrDefault(o => o.Id == orderId);
-
-                if (order != null)
-                {
-                    // Actualización de los valores de los campos del pedido utilizando datos del updatedOrder
-                    order.CustomerName = updatedOrder.CustomerName;
-                    order.Quantity = updatedOrder.Quantity;
-
-                    _serviceContext.SaveChanges();
-
-                    return Ok("El pedido se ha actualizado correctamente.");
-                }
-                else
-                {
-                    return NotFound("No se ha encontrado el pedido con el identificador especificado.");
-                }
-            }
-            else
-            {
-                return Unauthorized("El usuario no está autorizado o no existe");
-            }
-        }
-
-
-        //eliminar una orden de la tabla Orders по Id
-        //[HttpDelete("Order/Delete/OrderId", Name = "DeleteOrder")]
-        //public IActionResult Delete(int orderId)
-        //{
-        //    var order = _serviceContext.Orders.Find(orderId);
-        //    if (order != null)
-        //    {
-        //        // Llamar al método para eliminar un producto por identificador
-        //        bool isDeleted = _serviceContext.RemoveOrderById(orderId);
-
-        //        if (isDeleted)
-        //        {
-        //            return Ok("El order se ha eliminado correctamente.");
-        //        }
-        //        else
-        //        {
-        //            return BadRequest("Error al eliminar un pedido.");
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return NotFound("No se ha encontrado el !order! con el identificador especificado.");
-        //    }
-        //}
-        // Eliminar registros de la tabla Orders
-        [HttpDelete("Order/Delete/{orderId}", Name = "DeleteOrder")]
-        public IActionResult Delete(int orderId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
-        {
-            var seletedUser = _serviceContext.Set<UserItem>()
-                                   .Where(u => u.NombreUsuario == userNombreUsuario
-                                        && u.Contraseña == userContraseña
-                                        && u.Rol == 1)
-                                    .FirstOrDefault();
-
-            if (seletedUser != null)
-            {
-                var order = _serviceContext.Orders.Find(orderId);
-
-                if (order != null)
-                {
-                    // Llamar al método para eliminar un pedido por identificador
-                    bool isDeleted = _serviceContext.RemoveOrderById(orderId);
-
-                    if (isDeleted)
-                    {
-                        return Ok("El pedido se ha eliminado correctamente.");
-                    }
-                    else
-                    {
-                        return BadRequest("Error al eliminar el pedido.");
-                    }
-                }
-                else
-                {
-                    return NotFound("No se ha encontrado el pedido con el identificador especificado.");
-                }
-            }
-            else
-            {
-                return Unauthorized("El usuario no está autorizado o no existe");
-            }
-        }
-
-    }
-}
+ }
