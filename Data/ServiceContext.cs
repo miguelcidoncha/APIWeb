@@ -16,7 +16,10 @@ namespace Data
     {
         public ServiceContext(DbContextOptions<ServiceContext> options) : base(options) { }
         public DbSet<ProductItem> Products { get; set; }
+        public DbSet<UserItem> Users { get; set; }
+        public DbSet<RollItem> RollUser { get; set; }
         public DbSet<OrderItem> Orders { get; set; } //Добавляем DbSet для заказов
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -25,6 +28,20 @@ namespace Data
                 entity.ToTable("Products");
             });
 
+
+            builder.Entity<UserItem>(entity =>
+            {
+                entity.ToTable("Users");
+                entity.HasKey(u => u.IdUsuario);
+                entity.HasOne<RollItem>().WithMany().HasForeignKey(u => u.Rol);
+            });
+
+            builder.Entity<RollItem>(entity =>
+            {
+                entity.ToTable("RollUser");
+                entity.HasKey(u => u.IdRoll);
+            });
+            
             builder.Entity<OrderItem>(entity =>
             {
                 entity.ToTable("Orders"); // Назначаем имя таблицы "Orders"
@@ -77,6 +94,7 @@ namespace Data
             }
 
             return false; // Запись с указанным идентификатором не найдена
+
         }
     }
     public class ServiceContextFactory : IDesignTimeDbContextFactory<ServiceContext>

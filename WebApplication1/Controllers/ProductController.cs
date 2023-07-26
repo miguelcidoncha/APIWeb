@@ -1,6 +1,7 @@
 ﻿using Data;
 using Entities;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Authentication;
 using Microsoft.EntityFrameworkCore;
 using System.Web.Http.Cors;
 using WebApplication1.IServices;
@@ -23,9 +24,24 @@ namespace WebApplication1.Controllers
         }
         //добавление продукта
         [HttpPost(Name = "InsertProduct")]
-        public int Post([FromBody] ProductItem productItem)
+        public int Post([FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] ProductItem productItem)
         {
-            return _productService.insertProduct(productItem);
+
+            var seletedUser = _serviceContext.Set<UserItem>()
+                               .Where(u => u.NombreUsuario == userNombreUsuario
+                                    && u.Contraseña == userContraseña
+                                    && u.Rol == 1)
+                                .FirstOrDefault();
+
+            if (seletedUser != null)
+            {
+                return _productService.insertProduct(productItem);
+            }
+            else
+            {
+                throw new InvalidCredentialException("El ususario no esta autorizado o no existe");
+            }
+
         }
         //получение продукта из таблицы Products по Id
         [HttpGet("productId", Name = "GetProduct")]
@@ -199,5 +215,6 @@ namespace WebApplication1.Controllers
                 return NotFound("No se ha encontrado el !order! con el identificador especificado.");
             }
         }
+
     }
 }
