@@ -70,7 +70,6 @@ namespace Data.Migrations
                     b.ToTable("Products", (string)null);
                 });
 
-
             modelBuilder.Entity("Entities.RollItem", b =>
                 {
                     b.Property<int>("IdRoll")
@@ -114,14 +113,6 @@ namespace Data.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("Entities.UserItem", b =>
-                {
-                    b.HasOne("Entities.RollItem", null)
-                        .WithMany()
-                        .HasForeignKey("Rol")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
             modelBuilder.Entity("Entities.OrderItem", b =>
                 {
                     b.HasOne("Entities.ProductItem", "Product")
@@ -133,10 +124,18 @@ namespace Data.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("Entities.UserItem", b =>
+                {
+                    b.HasOne("Entities.RollItem", null)
+                        .WithMany()
+                        .HasForeignKey("Rol")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Entities.ProductItem", b =>
                 {
                     b.Navigation("Orders");
-
                 });
 #pragma warning restore 612, 618
         }
