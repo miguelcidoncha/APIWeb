@@ -38,10 +38,36 @@ namespace WebApplication1.Controllers
             }
             else
             {
-                return NotFound("Продукт с указанным идентификатором не найден.");
+                return NotFound("No se ha encontrado el producto con el identificador especificado.");
             }
         }
-            //удаление продукта из таблицы Products по Id
+
+        // Метод для изменения записий из таблицы "Products" по идентификатору
+        [HttpPut(Name = "UpdateProduct")]
+        public IActionResult UpdateProduct(int productId, [FromBody] ProductItem updatedProduct)
+        {
+            var product = _serviceContext.Products.FirstOrDefault(p => p.Id == productId);
+
+            if (product != null)
+            {
+                // Обновляем значения полей продукта с помощью данных из updatedProduct
+                product.ProductName = updatedProduct.ProductName;
+                product.Quantity = updatedProduct.Quantity;
+                product.Manufacturer = updatedProduct.Manufacturer;
+
+                // Сохраняем изменения в базе данных
+                _serviceContext.SaveChanges();
+
+                return Ok("El producto se ha actualizado correctamente.");
+            }
+            else
+            {
+                return NotFound("No se ha encontrado el producto con el identificador especificado.");
+            }
+        }
+
+
+        //удаление продукта из таблицы Products по Id
         [HttpDelete("productId", Name = "DeleteProduct")]
         public IActionResult Delete(int productId)
         {
@@ -85,8 +111,34 @@ namespace WebApplication1.Controllers
         //    return _orderService.insertOrder(orderItem);
         //}
 
+        //добавление заказа
+        [HttpPost("Order/Post", Name = "InsertOrder")]
+        public IActionResult CreateOrder(int productId, [FromBody] OrderItem orderItem)
+        {
+            //var product = _serviceContext.Orders.FirstOrDefault(o => o.ProductId == productId);
+
+            //if (product == null)
+            //{
+            if (orderItem != null)
+            {
+                var newOrderItem = new OrderItem(); // Создаем новый экземпляр OrderItem, если его нет в теле запроса
+                newOrderItem.ProductId = productId;
+                newOrderItem.CustomerName = orderItem.CustomerName;
+                // Просто устанавливаем ProductId, не создавая новый экземпляр OrderItem
+                _serviceContext.Orders.Add(newOrderItem);
+                _serviceContext.SaveChanges();
+
+                return Ok("El order se ha creado correctamente.");
+            }
+            // Связываем заказ с продуктом по идентификатору продукта
+            else
+            {
+                return NotFound("No se ha encontrado el order con el identificador especificado.");
+            }
+        }
+
         //получение заказа из таблицы Ordens по Id
-        [HttpGet("OrdensId", Name = "GetOrder")]
+        [HttpGet("Order/Get", Name = "GetOrder")]
         public IActionResult Get(int orderId)
         {
             var order = _serviceContext.Orders.FirstOrDefault(p => p.Id == orderId);
@@ -100,8 +152,31 @@ namespace WebApplication1.Controllers
             }
         }
 
+        [HttpPut("Order/UpdateOrder", Name = "UpdateOrder")]
+        public IActionResult UpdateOrder(int orderId, [FromBody] OrderItem updatedOrder)
+        {
+            var order = _serviceContext.Orders.FirstOrDefault(o => o.Id == orderId);
+
+            if (order != null)
+            {
+                // Обновляем значения полей заказа с помощью данных из updatedOrder
+                order.CustomerName = updatedOrder.CustomerName;
+                order.Quantity = updatedOrder.Quantity;
+
+                // Сохраняем изменения в базе данных
+                _serviceContext.SaveChanges();
+
+                return Ok("El pedido se ha actualizado correctamente.");
+            }
+            else
+            {
+                return NotFound("No se ha encontrado el pedido con el identificador especificado.");
+            }
+        }
+
+
         //удаление заказа из таблицы Orders по Id
-        [HttpDelete("OrdersId", Name = "DeleteOrder")]
+        [HttpDelete("Order/Delete/OrderId", Name = "DeleteOrder")]
         public IActionResult Delete(int orderId)
         {
             var order = _serviceContext.Orders.Find(orderId);
@@ -124,33 +199,5 @@ namespace WebApplication1.Controllers
                 return NotFound("No se ha encontrado el !order! con el identificador especificado.");
             }
         }
-
-        [HttpPost("productId", Name = "InsertOrder")]
-        public IActionResult CreateOrder(int productId, [FromBody] OrderItem orderItem)
-        {
-            //var product = _serviceContext.Orders.FirstOrDefault(o => o.ProductId == productId);
-
-            //if (product == null)
-            //{
-                if (orderItem != null)
-                {
-                   var newOrderItem = new OrderItem(); // Создаем новый экземпляр OrderItem, если его нет в теле запроса
-                    newOrderItem.ProductId = productId;
-                    newOrderItem.CustomerName = orderItem.CustomerName;
-                // Просто устанавливаем ProductId, не создавая новый экземпляр OrderItem
-                     _serviceContext.Orders.Add(newOrderItem);
-                    _serviceContext.SaveChanges();
-                return Ok("El order se ha creado correctamente.");
-                }
-                // Связываем заказ с продуктом по идентификатору продукта
-               
-
-                
-            //}
-            else
-            {
-                return NotFound("No se ha encontrado el order con el identificador especificado.");
-            }
-}
     }
 }

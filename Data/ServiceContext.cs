@@ -37,6 +37,7 @@ namespace Data
                       .OnDelete(DeleteBehavior.NoAction); // Задаем правило удаления NO ACTION
             });
         }
+        
 
         // Метод для удаления записи из таблицы "Products" по идентификатору
         public bool RemoveProductById(int productId)
