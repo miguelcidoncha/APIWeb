@@ -37,8 +37,20 @@ namespace WebApplication1.Controllers
 
             if (seletedUser != null)
             {
+                // Выполняем добавление продукта
+                int productId = _productService.insertProduct(productItem);
 
-                return _productService.insertProduct(productItem);
+                // Журналирование действия добавления продукта
+                _serviceContext.AuditLogs.Add(new AuditLog
+                {
+                    Action = "Insert",
+                    TableName = "Products",
+                    RecordId = productId,
+                    Timestamp = DateTime.Now,
+                    UserId = seletedUser.IdUsuario
+                });
+                _serviceContext.SaveChanges(); // Сохраняем изменения в базу данных
+                return productId; // Возвращаем ID добавленного продукта
             }
             else
             {

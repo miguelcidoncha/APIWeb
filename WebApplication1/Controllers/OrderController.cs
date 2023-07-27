@@ -37,9 +37,20 @@ namespace WebApplication1.Controllers
             {
                 if (orderItem != null)
                 {
+
                     var newOrderItem = new OrderItem();
                     newOrderItem.ProductId = productId;
                     newOrderItem.CustomerName = orderItem.CustomerName;
+
+                    // Журналирование действия создания заказа
+                    _serviceContext.AuditLogs.Add(new AuditLog
+                    {
+                        Action = "Insert",
+                        TableName = "Orders",
+                        RecordId = newOrderItem.Id,
+                        Timestamp = DateTime.Now,
+                        UserId = seletedUser.IdUsuario
+                    });
                     // Просто устанавливаем ProductId, не создавая новый экземпляр OrderItem
                     _serviceContext.Orders.Add(newOrderItem);
                     _serviceContext.SaveChanges();
