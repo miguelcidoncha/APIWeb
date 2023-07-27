@@ -24,37 +24,38 @@ namespace WebApplication1.Controllers
         }
 
         // Añadir pedidos
-
         [HttpPost("Order/Post", Name = "InsertOrder")]
         public IActionResult CreateOrder(int productId, [FromBody] OrderItem orderItem, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
         {
             var seletedUser = _serviceContext.Set<UserItem>()
                                    .Where(u => u.NombreUsuario == userNombreUsuario
                                         && u.Contraseña == userContraseña
-                                        && u.Rol == 1)
+                                        && u.IdRol == 1)
                                     .FirstOrDefault();
 
             if (seletedUser != null)
             {
                 if (orderItem != null)
                 {
-
                     var newOrderItem = new OrderItem();
                     newOrderItem.ProductId = productId;
                     newOrderItem.CustomerName = orderItem.CustomerName;
+
+                    // Просто устанавливаем ProductId, не создавая новый экземпляр OrderItem
+                    _serviceContext.Orders.Add(newOrderItem);
+                    _serviceContext.SaveChanges();
 
                     // Журналирование действия создания заказа
                     _serviceContext.AuditLogs.Add(new AuditLog
                     {
                         Action = "Insert",
                         TableName = "Orders",
-                        RecordId = newOrderItem.Id,
+                        RecordId = newOrderItem.IdOrder, // Здесь уже есть значение IdOrder из базы данных
                         Timestamp = DateTime.Now,
                         UserId = seletedUser.IdUsuario
                     });
-                    // Просто устанавливаем ProductId, не создавая новый экземпляр OrderItem
-                    _serviceContext.Orders.Add(newOrderItem);
-                    _serviceContext.SaveChanges();
+
+                    _serviceContext.SaveChanges(); // Сохраняем изменения в базу данных
 
                     return Ok("El pedido se ha creado correctamente.");
                 }
@@ -69,21 +70,18 @@ namespace WebApplication1.Controllers
             }
         }
 
+
         //recuperación de pedidos de la tabla Ordens por Id
         [HttpGet("Order/Get", Name = "GetOrder")]
         public IActionResult Get(int orderId)
         {
-            var order = _serviceContext.Orders.FirstOrDefault(p => p.Id == orderId);
+            var order = _serviceContext.Orders.FirstOrDefault(p => p.IdOrder == orderId);
             if (order != null)
             {
                 return Ok(order);
             }
             else
             {
-                return NotFound("Заказ с указанным идентификатором не найден.");
-            }
-        }
-
                 return NotFound("No se ha encontrado el pedido con el identificador especificado.");
             }
         }
@@ -95,12 +93,12 @@ namespace WebApplication1.Controllers
             var seletedUser = _serviceContext.Set<UserItem>()
                                    .Where(u => u.NombreUsuario == userNombreUsuario
                                         && u.Contraseña == userContraseña
-                                        && u.Rol == 1)
+                                        && u.IdRol == 1)
                                     .FirstOrDefault();
 
             if (seletedUser != null)
             {
-                var order = _serviceContext.Orders.FirstOrDefault(o => o.Id == orderId);
+                var order = _serviceContext.Orders.FirstOrDefault(o => o.IdOrder == orderId);
 
                 if (order != null)
                 {
@@ -140,7 +138,7 @@ namespace WebApplication1.Controllers
             var seletedUser = _serviceContext.Set<UserItem>()
                                    .Where(u => u.NombreUsuario == userNombreUsuario
                                         && u.Contraseña == userContraseña
-                                        && u.Rol == 1)
+                                        && u.IdRol == 1)
                                     .FirstOrDefault();
 
             if (seletedUser != null)
@@ -180,9 +178,6 @@ namespace WebApplication1.Controllers
                 return Unauthorized("El usuario no está autorizado o no existe");
             }
         }
-    }
-}
-//?????
     }
 }
 

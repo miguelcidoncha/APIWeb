@@ -24,7 +24,7 @@ namespace WebApplication1.Controllers
 
         }
 
-        [HttpPost(Name = "insertUsers")]
+        [HttpPost(Name = "InsertUsers")]
 
         //Unidad de verificación de los derechos de acceso
         public int Post([FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] UserItem userItem)
@@ -32,10 +32,19 @@ namespace WebApplication1.Controllers
             var seletedUser = _serviceContext.Set<UserItem>()
                                .Where(u => u.NombreUsuario == userNombreUsuario
                                     && u.Contraseña == userContraseña
-                                    && u.Rol == 1)
+                                    && u.IdRol == 1)
                                 .FirstOrDefault();
             if ( seletedUser != null)
             {
+                // Журналирование действия
+                _serviceContext.AuditLogs.Add(new AuditLog
+                {
+                    Action = "Insert",
+                    TableName = "Users",
+                    //RecordId = IdRol,
+                    Timestamp = DateTime.Now,
+                    UserId = seletedUser.IdUsuario // Добавляем информацию о UserId в AuditLog
+                });
                 return _userService.insertUsers(userItem);
             }
             else
@@ -51,7 +60,7 @@ namespace WebApplication1.Controllers
             var seletedUser = _serviceContext.Set<UserItem>()
                                    .Where(u => u.NombreUsuario == userNombreUsuario
                                         && u.Contraseña == userContraseña
-                                        && u.Rol == 1)
+                                        && u.IdRol == 1)
                                     .FirstOrDefault();
 
             if (seletedUser != null)
@@ -61,8 +70,9 @@ namespace WebApplication1.Controllers
                 if (user != null)
                 {
                     user.NombreUsuario = updatedUser.NombreUsuario;
+                    user.IdRol = updatedUser.IdRol;
                     user.Contraseña = updatedUser.Contraseña;
-                    user.Rol = updatedUser.Rol;
+                    user.Email = updatedUser.Email;
 
                     _serviceContext.SaveChanges();
 
@@ -87,7 +97,7 @@ namespace WebApplication1.Controllers
             var seletedUser = _serviceContext.Set<UserItem>()
                                    .Where(u => u.NombreUsuario == userNombreUsuario
                                         && u.Contraseña == userContraseña
-                                        && u.Rol == 1)
+                                        && u.IdRol == 1)
                                     .FirstOrDefault();
 
             if (seletedUser != null)
@@ -117,5 +127,6 @@ namespace WebApplication1.Controllers
                 return Unauthorized("El usuario no está autorizado o no existe");
             }
         }
+
     }
 }

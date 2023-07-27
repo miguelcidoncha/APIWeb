@@ -14,7 +14,7 @@ namespace WebApplication1.Services
         {
             _serviceContext.Orders.Add(orderItem);
             _serviceContext.SaveChanges();
-            return orderItem.Id;
+            return orderItem.IdOrder;
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Web.Http.Cors;
 using WebApplication1.IServices;
 using WebApplication1.Services;
 using System.Linq;
+using Microsoft.AspNetCore.Identity;
 
 namespace WebApplication1.Controllers
 {
@@ -15,8 +16,9 @@ namespace WebApplication1.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
-        private readonly ServiceContext _serviceContext;
-        
+        private readonly ServiceContext _serviceContext; 
+
+
 
         public ProductController(IProductService productService, ServiceContext serviceContext)
         {
@@ -26,36 +28,44 @@ namespace WebApplication1.Controllers
 
         //Añadir un product
         [HttpPost(Name = "InsertProduct")]
+
         //Unidad de verificación de los derechos de acceso
-        public int Post([FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] ProductItem productItem)
+        //возвращаю Ok(productId), где productId - это IActionResult для метода с атрибутом HttpPost.
+        public IActionResult Post([FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] ProductItem productItem)
         {
-
-            var seletedUser = _serviceContext.Set<UserItem>()
-                               .Where(u => u.NombreUsuario == userNombreUsuario
-                                    && u.Contraseña == userContraseña
-                                    && u.Rol == 1)
-                                .FirstOrDefault();
-
-            if (seletedUser != null)
+            try
             {
-                // Выполняем добавление продукта
-                int productId = _productService.insertProduct(productItem);
+                    var seletedUser = _serviceContext.Set<UserItem>()
+                                   .Where(u => u.NombreUsuario == userNombreUsuario
+                                        && u.Contraseña == userContraseña
+                                        && u.IdRol == 1)
+                                    .FirstOrDefault();
 
-                // Журналирование действия добавления продукта
-                _serviceContext.AuditLogs.Add(new AuditLog
+                if (seletedUser != null)
                 {
-                    Action = "Insert",
-                    TableName = "Products",
-                    RecordId = productId,
-                    Timestamp = DateTime.Now,
-                    UserId = seletedUser.IdUsuario
-                });
-                _serviceContext.SaveChanges(); // Сохраняем изменения в базу данных
-                return productId; // Возвращаем ID добавленного продукта
+                    // Выполняем добавление продукта
+                    int productId = _productService.insertProduct(productItem);
+                    // Журналирование действия добавления продукта
+                    _serviceContext.AuditLogs.Add(new AuditLog
+                    {
+                        Action = "Insert",
+                        TableName = "Products",
+                        Timestamp = DateTime.Now,
+                        UserId = seletedUser.IdUsuario
+                    });
+                    _serviceContext.SaveChanges(); // Сохраняем изменения в базу данных
+
+                    return Ok(productId); // // Возвращаем статус 200 OK с данными productId
+                }
+                else
+                {
+                    //throw new InvalidCredentialException("El ususario no esta autorizado o no existe");
+                    return BadRequest("Usuario no autorizado o no encontrado"); // Возвращаем сообщение об ошибке
+                }
             }
-            else
+            catch (Exception ex)
             {
-                throw new InvalidCredentialException("El ususario no esta autorizado o no existe");
+                return StatusCode(500, "Error al añadir el producto: " + ex.Message);
             }
         }
 
@@ -82,7 +92,7 @@ namespace WebApplication1.Controllers
             var seletedUser = _serviceContext.Set<UserItem>()
                                    .Where(u => u.NombreUsuario == userNombreUsuario
                                         && u.Contraseña == userContraseña
-                                        && u.Rol == 1)
+                                        && u.IdRol == 1)
                                     .FirstOrDefault();
 
             if (seletedUser != null)
@@ -102,8 +112,8 @@ namespace WebApplication1.Controllers
                     });
                     // Обновляем значения полей продукта с помощью данных из updatedProduct
                     product.ProductName = updatedProduct.ProductName;
+                    product.BrandName = updatedProduct.BrandName;
                     product.Quantity = updatedProduct.Quantity;
-                    product.Manufacturer = updatedProduct.Manufacturer;
 
                     _serviceContext.SaveChanges();
 
@@ -128,7 +138,7 @@ namespace WebApplication1.Controllers
             var seletedUser = _serviceContext.Set<UserItem>()
                                    .Where(u => u.NombreUsuario == userNombreUsuario
                                         && u.Contraseña == userContraseña
-                                        && u.Rol == 1)
+                                        && u.IdRol == 1)
                                     .FirstOrDefault();
 
             if (seletedUser != null)
@@ -137,7 +147,6 @@ namespace WebApplication1.Controllers
 
                 if (product != null)
                 {
-                    bool isDeleted = _serviceContext.RemoveUserById(productId);
                     // Журналирование действия удаления продукта
                     _serviceContext.AuditLogs.Add(new AuditLog
                     {
@@ -148,7 +157,8 @@ namespace WebApplication1.Controllers
                         UserId = seletedUser.IdUsuario // Добавляем информацию о UserId в AuditLog
                     });
                     // Вызываем метод для удаления продукта по идентификатору
-                    bool isDeleted = _serviceContext.RemoveProductById(productId);
+                    //bool isDeleted = _serviceContext.RemoveProductById(productId);
+                    bool isDeleted = _serviceContext.RemoveUserById(productId);
 
                     if (isDeleted)
                     {

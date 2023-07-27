@@ -33,7 +33,7 @@ namespace Data
             {
                 entity.ToTable("Users");
                 entity.HasKey(u => u.IdUsuario);
-                entity.HasOne<RollItem>().WithMany().HasForeignKey(u => u.Rol);
+                entity.HasOne<RollItem>().WithMany().HasForeignKey(u => u.IdRol);
             });
 
             builder.Entity<RollItem>(entity =>              // Конфигурация модели RollItem
@@ -45,7 +45,7 @@ namespace Data
             builder.Entity<OrderItem>(entity =>             // Конфигурация модели OrderItem
             {
                 entity.ToTable("Orders");
-                entity.HasKey(o => o.Id);                   // Задаем связь с таблицей "Products" по идентификатору продукта
+                entity.HasKey(o => o.IdOrder);                   // Задаем связь с таблицей "Products" по идентификатору продукта
                 entity.HasOne(o => o.Product)
                       .WithMany(p => p.Orders)
                       .HasForeignKey(o => o.ProductId)
@@ -55,7 +55,7 @@ namespace Data
             builder.Entity<AuditLog>(entity =>              // Конфигурация модели AuditLog
             {
                 entity.ToTable("AuditLog");
-                entity.HasKey(a => a.Id);
+                entity.HasKey(a => a.IdLog);
                 // Устанавливаем внешний ключ для связи с таблицей Users
                 entity.HasOne(a => a.User)
                       .WithMany(u => u.AuditLogs)
@@ -91,7 +91,7 @@ namespace Data
         public bool RemoveOrderById(int orderId)
         {
             // Находим запись, которую хотим удалить, по ее идентификатору
-            var orderToRemove = Orders.FirstOrDefault(p => p.Id == orderId);
+            var orderToRemove = Orders.FirstOrDefault(p => p.IdOrder == orderId);
 
             // Проверяем, была ли найдена запись
             if (orderToRemove != null)

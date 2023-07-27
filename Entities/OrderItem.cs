@@ -5,7 +5,7 @@ namespace Entities
 {
     public class OrderItem
     {
-        public int Id { get; set; }
+        public int IdOrder { get; set; }
         public string CustomerName { get; set; }
         public int ProductId { get; set; }
 

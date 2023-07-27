@@ -16,16 +16,15 @@ namespace Entities
         public string NombreUsuario { get; set; }
 
         [Required]
+        public int IdRol { get; set; }
+
+        [Required]
         public string Contraseña { get; set; }
 
         [Required]
         public string Email { get; set; }
 
-        [Required]
-        public int Rol { get; set; }
-
         [JsonIgnore]
-        public string Users { get; set; }
         public List<AuditLog> AuditLogs { get; set; }
 
     }
