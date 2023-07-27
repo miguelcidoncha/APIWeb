@@ -113,7 +113,7 @@ namespace WebApplication1.Controllers
                     });
                     // Actualización de los valores de los campos del pedido utilizando datos del updatedOrder
                     order.CustomerName = updatedOrder.CustomerName;
-                    order.Quantity = updatedOrder.Quantity;
+                    order.Productstock = updatedOrder.Productstock;
 
                     _serviceContext.SaveChanges();
 

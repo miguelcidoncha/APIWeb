@@ -113,7 +113,7 @@ namespace WebApplication1.Controllers
                     // Обновляем значения полей продукта с помощью данных из updatedProduct
                     product.ProductName = updatedProduct.ProductName;
                     product.BrandName = updatedProduct.BrandName;
-                    product.Quantity = updatedProduct.Quantity;
+                    product.Productstock = updatedProduct.Productstock;
 
                     _serviceContext.SaveChanges();
 
@@ -136,48 +136,45 @@ namespace WebApplication1.Controllers
         public IActionResult Delete(int productId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
         {
             var seletedUser = _serviceContext.Set<UserItem>()
-                                   .Where(u => u.NombreUsuario == userNombreUsuario
+                                   .FirstOrDefault(u => u.NombreUsuario == userNombreUsuario
                                         && u.Contraseña == userContraseña
-                                        && u.IdRol == 1)
-                                    .FirstOrDefault();
+                                        && u.IdRol == 1);
 
-            if (seletedUser != null)
-            {
-                var product = _serviceContext.Products.Find(productId);
-
-                if (product != null)
-                {
-                    // Журналирование действия удаления продукта
-                    _serviceContext.AuditLogs.Add(new AuditLog
-                    {
-                        Action = "Delete",
-                        TableName = "Products",
-                        RecordId = productId,
-                        Timestamp = DateTime.Now,
-                        UserId = seletedUser.IdUsuario // Добавляем информацию о UserId в AuditLog
-                    });
-                    // Вызываем метод для удаления продукта по идентификатору
-                    //bool isDeleted = _serviceContext.RemoveProductById(productId);
-                    bool isDeleted = _serviceContext.RemoveUserById(productId);
-
-                    if (isDeleted)
-                    {
-                        return Ok("El producto se ha eliminado correctamente.");
-                    }
-                    else
-                    {
-                        return BadRequest("Error al eliminar un producto.");
-                    }
-                }
-                else
-                {
-                    return NotFound("No se ha encontrado el producto con el identificador especificado.");
-                }
-            }
-            else
+            if (seletedUser == null)
             {
                 return Unauthorized("El usuario no está autorizado o no existe");
             }
+
+            var product = _serviceContext.Products.Find(productId);
+
+            if (product == null)
+            {
+                return NotFound("No se ha encontrado el producto con el identificador especificado.");
+            }
+
+            // Журналирование действия удаления продукта
+            _serviceContext.AuditLogs.Add(new AuditLog
+            {
+                Action = "Delete",
+                TableName = "Products",
+                RecordId = productId,
+                Timestamp = DateTime.Now,
+                UserId = seletedUser.IdUsuario // Добавляем информацию о UserId в AuditLog
+            });
+
+            // Вызываем метод для удаления продукта по идентификатору
+            bool isDeleted = _serviceContext.RemoveProductById(productId);
+
+            if (isDeleted)
+            {
+                return Ok("El producto se ha eliminado correctamente.");
+            }
+            else
+            {
+                return BadRequest("Error al eliminar un producto.");
+            }
         }
+
+
     }
- }
+}

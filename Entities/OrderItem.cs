@@ -14,6 +14,6 @@ namespace Entities
         [JsonIgnore]
         public ProductItem Product { get; set; }
 
-        public int Quantity { get; set; }
+        public int Productstock { get; set; }
     }
 }
