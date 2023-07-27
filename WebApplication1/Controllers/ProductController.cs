@@ -22,8 +22,9 @@ namespace WebApplication1.Controllers
             _productService = productService;
             _serviceContext = serviceContext;
         }
-     
+
         [HttpPost(Name = "InsertProduct")]
+        //Unidad de verificación de los derechos de acceso
         public int Post([FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] ProductItem productItem)
         {
 
@@ -41,9 +42,8 @@ namespace WebApplication1.Controllers
             {
                 throw new InvalidCredentialException("El ususario no esta autorizado o no existe");
             }
-
         }
-        
+
         [HttpGet("productId", Name = "GetProduct")]
         public IActionResult Get(int productId)
         {
@@ -68,6 +68,7 @@ namespace WebApplication1.Controllers
                                         && u.Rol == 1)
                                     .FirstOrDefault();
 
+
             if (seletedUser != null)
             {
                 var product = _serviceContext.Products.FirstOrDefault(p => p.Id == productId);
@@ -89,7 +90,7 @@ namespace WebApplication1.Controllers
 
                     _serviceContext.SaveChanges();
 
-                    return Ok("El producto se ha actualizado correctamente.");
+                    return Ok("El producto se ha actualizado correctamente.");      
                 }
                 else
                 {
@@ -101,7 +102,6 @@ namespace WebApplication1.Controllers
                 return Unauthorized("El usuario no está autorizado o no existe");
             }
         }
-
 
 
         [HttpDelete("{productId}", Name = "DeleteProduct")]
@@ -128,11 +128,14 @@ namespace WebApplication1.Controllers
                     else
                     {
                         return BadRequest("Error al eliminar un producto.");
+
                     }
                 }
                 else
                 {
+
                     return NotFound("No se ha encontrado el producto con el identificador especificado.");
+
                 }
             }
             else
