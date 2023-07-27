@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Entities
@@ -9,6 +10,7 @@ namespace Entities
     public class ProductItem
     {
         public int Id { get; set; }
+
         public string name { get; set; }
         public string brand { get; set; }
         public string sneakerModel { get; set; }
@@ -19,5 +21,7 @@ namespace Entities
         public string stock { get; set; }
         public string price { get; set; }
         public string discount { get; set; }
+
     }
+
 }
