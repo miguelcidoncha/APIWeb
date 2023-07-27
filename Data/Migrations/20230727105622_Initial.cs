@@ -16,9 +16,16 @@ namespace Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    Manufacturer = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    brand = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    sneakerModel = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    typeOfFootwear = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    recipient = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    size = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    color = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    stock = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    price = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    discount = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

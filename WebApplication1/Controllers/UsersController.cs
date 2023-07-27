@@ -44,7 +44,7 @@ namespace WebApplication1.Controllers
 
 
         [HttpPut(Name = "UpdateUser")]
-        public IActionResult UpdateUser(int userId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] UserItem updatedUser)
+        public IActionResult UpdateUser(int IdUsuario, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] UserItem updatedUser)
         {
             var seletedUser = _serviceContext.Set<UserItem>()
                                    .Where(u => u.NombreUsuario == userNombreUsuario
@@ -54,7 +54,7 @@ namespace WebApplication1.Controllers
 
             if (seletedUser != null)
             {
-                var user = _serviceContext.Users.FirstOrDefault(p => p.IdUsuario == userId);
+                var user = _serviceContext.Users.FirstOrDefault(p => p.IdUsuario == IdUsuario);
 
                 if (user != null)
                 {
@@ -79,8 +79,8 @@ namespace WebApplication1.Controllers
 
 
 
-        [HttpDelete("{userId}", Name = "DeleteUser")]
-        public IActionResult Delete(int userId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
+        [HttpDelete("{IdUsuario}", Name = "DeleteUser")]
+        public IActionResult Delete(int IdUsuario, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
         {
             var seletedUser = _serviceContext.Set<UserItem>()
                                    .Where(u => u.NombreUsuario == userNombreUsuario
@@ -90,15 +90,15 @@ namespace WebApplication1.Controllers
 
             if (seletedUser != null)
             {
-                var user = _serviceContext.Users.Find(userId);
+                var user = _serviceContext.Users.Find(IdUsuario);
 
                 if (user != null)
                 {
-                    bool isDeleted = _serviceContext.RemoveUserById(userId);
+                    bool isDeleted = _serviceContext.RemoveUserById(IdUsuario);
 
                     if (isDeleted)
                     {
-                        return Ok("El usuario se ha eliminado correctamente.");
+                        return Ok("El ususario se ha eliminado correctamente.");
                     }
                     else
                     {
@@ -112,7 +112,7 @@ namespace WebApplication1.Controllers
             }
             else
             {
-                return Unauthorized("El usuario no está autorizado o no existe");
+                 return Unauthorized("El usuario no está autorizado o no existe");
             }
         }
 

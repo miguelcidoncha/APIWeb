@@ -20,8 +20,5 @@ namespace Entities
 
         [Required]
         public int Rol { get; set; }
-
-        [JsonIgnore]
-        public object Users { get; set; }
     }
 }

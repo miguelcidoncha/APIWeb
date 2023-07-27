@@ -18,7 +18,7 @@ namespace Data
         public DbSet<ProductItem> Products { get; set; }
         public DbSet<UserItem> Users { get; set; }
         public DbSet<RollItem> RollUser { get; set; }
-        public DbSet<OrderItem> Orders { get; set; } //Добавляем DbSet для заказов
+        public DbSet<OrderItem> Orders { get; set; } 
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -44,56 +44,71 @@ namespace Data
             
             builder.Entity<OrderItem>(entity =>
             {
-                entity.ToTable("Orders"); // Назначаем имя таблицы "Orders"
+                entity.ToTable("Orders");
                 entity.HasKey(o => o.Id);
-                // Задаем связь с таблицей "Products" по идентификатору продукта
-
+                
                 entity.HasOne(o => o.Product)
                       .WithMany(p => p.Orders)
                       .HasForeignKey(o => o.ProductId)
-                      .OnDelete(DeleteBehavior.NoAction); // Задаем правило удаления NO ACTION
+                      .OnDelete(DeleteBehavior.NoAction); 
             });
         }
-        
 
-        // Метод для удаления записи из таблицы "Products" по идентификатору
-        public bool RemoveUserById(int productId)
+        public bool RemoveUserById(int IdUsuario)
         {
-            // Находим запись, которую хотим удалить, по ее идентификатору
-            var productToRemove = Products.FirstOrDefault(p => p.Id == productId);
 
-            // Проверяем, была ли найдена запись
-            if (productToRemove != null)
+            var userToRemove = Users.FirstOrDefault(p => p.IdUsuario == IdUsuario);
+
+
+            if (userToRemove != null)
             {
-                // Удаляем запись из контекста
-                Products.Remove(productToRemove);
 
-                // Сохраняем изменения в базе данных
+                Users.Remove(userToRemove);
+
+
                 SaveChanges();
-                return true; // Успешное удаление
+                return true;
             }
 
-            return false; // Запись с указанным идентификатором не найдена
+            return false;
         }
 
-        // Метод для удаления записи из таблицы "Orders" по идентификатору
-        public bool RemoveOrderById(int orderId)
+
+        public bool RemoveProductById(int productId)
         {
-            // Находим запись, которую хотим удалить, по ее идентификатору
-            var orderToRemove = Orders.FirstOrDefault(p => p.Id == orderId);
+           
+            var productToRemove = Products.FirstOrDefault(p => p.Id == productId);
 
-            // Проверяем, была ли найдена запись
-            if (orderToRemove != null)
+            
+            if (productToRemove != null)
             {
-                // Удаляем запись из контекста
-                Orders.Remove(orderToRemove);
 
-                // Сохраняем изменения в базе данных
+                Products.Remove(productToRemove);
+
+             
                 SaveChanges();
-                return true; // Успешное удаление
+                return true;
             }
 
-            return false; // Запись с указанным идентификатором не найдена
+            return false; 
+        }
+
+       
+        public bool RemoveOrderById(int orderId)
+        {
+         
+            var orderToRemove = Orders.FirstOrDefault(p => p.Id == orderId);
+
+            if (orderToRemove != null)
+            {
+               
+                Orders.Remove(orderToRemove);
+
+                SaveChanges();
+                return true; 
+            }
+
+            return false; 
 
         }
     }

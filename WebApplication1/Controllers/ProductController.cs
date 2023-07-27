@@ -74,9 +74,18 @@ namespace WebApplication1.Controllers
 
                 if (product != null)
                 {
-                    product.ProductName = updatedProduct.ProductName;
-                    product.Quantity = updatedProduct.Quantity;
-                    product.Manufacturer = updatedProduct.Manufacturer;
+                    product.name = updatedProduct.name;
+                    product.brand = updatedProduct.brand;
+                    product.sneakerModel = updatedProduct.sneakerModel;
+                    product.typeOfFootwear = updatedProduct.typeOfFootwear;
+                    product.recipient = updatedProduct.recipient;
+                    product.size = updatedProduct.size;
+                    product.color = updatedProduct.color;
+                    product.brand = updatedProduct.brand;
+                    product.stock = updatedProduct.stock;
+                    product.price = updatedProduct.price;
+                    product.discount = updatedProduct.discount;
+
 
                     _serviceContext.SaveChanges();
 
@@ -110,7 +119,7 @@ namespace WebApplication1.Controllers
 
                 if (product != null)
                 {
-                    bool isDeleted = _serviceContext.RemoveUserById(productId);
+                    bool isDeleted = _serviceContext.RemoveProductById(productId);
 
                     if (isDeleted)
                     {

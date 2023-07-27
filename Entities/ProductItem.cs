@@ -22,6 +22,8 @@ namespace Entities
         public string price { get; set; }
         public string discount { get; set; }
 
+        [JsonIgnore]
+        public ICollection<OrderItem> Orders { get; set; }
     }
 
 }
