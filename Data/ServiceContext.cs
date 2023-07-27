@@ -68,7 +68,7 @@ namespace Data
         
 
         // Метод для удаления записи из таблицы "Products" по идентификатору
-        public bool RemoveUserById(int productId)
+        public bool RemoveProductById(int productId)
         {
             // Находим запись, которую хотим удалить, по ее идентификатору
             var productToRemove = Products.FirstOrDefault(p => p.Id == productId);
@@ -76,10 +76,8 @@ namespace Data
             // Проверяем, была ли найдена запись
             if (productToRemove != null)
             {
-                // Удаляем запись из контекста
                 Products.Remove(productToRemove);
 
-                // Сохраняем изменения в базе данных
                 SaveChanges();
                 return true; // Успешное удаление
             }
@@ -90,14 +88,29 @@ namespace Data
         // Метод для удаления записи из таблицы "Orders" по идентификатору
         public bool RemoveOrderById(int orderId)
         {
-            // Находим запись, которую хотим удалить, по ее идентификатору
-            var orderToRemove = Orders.FirstOrDefault(p => p.IdOrder == orderId);
+            var orderToRemove = Orders.FirstOrDefault(o => o.IdOrder == orderId);
 
-            // Проверяем, была ли найдена запись
             if (orderToRemove != null)
             {
-                // Удаляем запись из контекста
                 Orders.Remove(orderToRemove);
+                SaveChanges();
+                return true;// Успешное удаление
+            }
+            return false;// Запись с указанным идентификатором не найдена
+        }
+
+        // В классе ServiceContext или другом классе, отвечающем за доступ к базе данных
+
+        public bool RemoveUserById(int userId)
+        {
+            // Находим запись пользователя, которую хотим удалить, по ее идентификатору
+            var userToRemove = Users.FirstOrDefault(u => u.IdUsuario == userId);
+
+            // Проверяем, была ли найдена запись
+            if (userToRemove != null)
+            {
+                // Удаляем запись из контекста
+                Users.Remove(userToRemove);
 
                 // Сохраняем изменения в базе данных
                 SaveChanges();
@@ -105,8 +118,8 @@ namespace Data
             }
 
             return false; // Запись с указанным идентификатором не найдена
-
         }
+
 
 
     }
