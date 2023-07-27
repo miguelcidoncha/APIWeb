@@ -23,6 +23,7 @@ namespace WebApplication1.Controllers
             _productService = productService;
             _serviceContext = serviceContext;
         }
+
         //Añadir un product
         [HttpPost(Name = "InsertProduct")]
         //Unidad de verificación de los derechos de acceso
@@ -57,6 +58,7 @@ namespace WebApplication1.Controllers
                 throw new InvalidCredentialException("El ususario no esta autorizado o no existe");
             }
         }
+
         //Pedir un producto de la tabla Products por su Id
         [HttpGet("productId", Name = "GetProduct")]
         public IActionResult Get(int productId)
@@ -71,7 +73,7 @@ namespace WebApplication1.Controllers
                 return NotFound("No se ha encontrado el producto con el identificador especificado.");
             }
         }
-
+        
         // modificar registros de la tabla "Products"
         // модифицировать записи в таблице "Products"
         [HttpPut(Name = "UpdateProduct")]
@@ -118,7 +120,6 @@ namespace WebApplication1.Controllers
             }
         }
 
-
         //eliminar un producto de la tabla Products по Id
         // Удалить запись из таблицы "Products"
         [HttpDelete("{productId}", Name = "DeleteProduct")]
@@ -136,6 +137,7 @@ namespace WebApplication1.Controllers
 
                 if (product != null)
                 {
+                    bool isDeleted = _serviceContext.RemoveUserById(productId);
                     // Журналирование действия удаления продукта
                     _serviceContext.AuditLogs.Add(new AuditLog
                     {

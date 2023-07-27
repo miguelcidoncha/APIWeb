@@ -68,7 +68,7 @@ namespace Data
         
 
         // Метод для удаления записи из таблицы "Products" по идентификатору
-        public bool RemoveProductById(int productId)
+        public bool RemoveUserById(int productId)
         {
             // Находим запись, которую хотим удалить, по ее идентификатору
             var productToRemove = Products.FirstOrDefault(p => p.Id == productId);

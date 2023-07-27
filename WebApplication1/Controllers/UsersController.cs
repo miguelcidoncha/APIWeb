@@ -1,6 +1,7 @@
 ﻿using Data;
 using Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Authentication;
 using System.Web.Http.Cors;
 using WebApplication1.IServices;
@@ -40,6 +41,80 @@ namespace WebApplication1.Controllers
             else
             {
                 throw new InvalidCredentialException("El ususario no esta autorizado o no existe");
+            }
+        }
+
+
+        [HttpPut(Name = "UpdateUser")]
+        public IActionResult UpdateUser(int userId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] UserItem updatedUser)
+        {
+            var seletedUser = _serviceContext.Set<UserItem>()
+                                   .Where(u => u.NombreUsuario == userNombreUsuario
+                                        && u.Contraseña == userContraseña
+                                        && u.Rol == 1)
+                                    .FirstOrDefault();
+
+            if (seletedUser != null)
+            {
+                var user = _serviceContext.Users.FirstOrDefault(p => p.IdUsuario == userId);
+
+                if (user != null)
+                {
+                    user.NombreUsuario = updatedUser.NombreUsuario;
+                    user.Contraseña = updatedUser.Contraseña;
+                    user.Rol = updatedUser.Rol;
+
+                    _serviceContext.SaveChanges();
+
+                    return Ok("El ususario se ha actualizado correctamente.");
+                }
+                else
+                {
+                    return NotFound("No se ha encontrado el usuario con el identificador especificado.");
+                }
+            }
+            else
+            {
+                return Unauthorized("El usuario no está autorizado o no existe");
+            }
+        }
+
+
+
+        [HttpDelete("{userId}", Name = "DeleteUser")]
+        public IActionResult Delete(int userId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
+        {
+            var seletedUser = _serviceContext.Set<UserItem>()
+                                   .Where(u => u.NombreUsuario == userNombreUsuario
+                                        && u.Contraseña == userContraseña
+                                        && u.Rol == 1)
+                                    .FirstOrDefault();
+
+            if (seletedUser != null)
+            {
+                var user = _serviceContext.Users.Find(userId);
+
+                if (user != null)
+                {
+                    bool isDeleted = _serviceContext.RemoveUserById(userId);
+
+                    if (isDeleted)
+                    {
+                        return Ok("El usuario se ha eliminado correctamente.");
+                    }
+                    else
+                    {
+                        return BadRequest("Error al eliminar un usuario.");
+                    }
+                }
+                else
+                {
+                    return NotFound("No se ha encontrado el usuario con el identificador especificado.");
+                }
+            }
+            else
+            {
+                return Unauthorized("El usuario no está autorizado o no existe");
             }
         }
     }

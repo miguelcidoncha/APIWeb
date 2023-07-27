@@ -1,4 +1,4 @@
-﻿using Data;
+using Data;
 using Entities;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Authentication;
@@ -24,6 +24,7 @@ namespace WebApplication1.Controllers
         }
 
         // Añadir pedidos
+
         [HttpPost("Order/Post", Name = "InsertOrder")]
         public IActionResult CreateOrder(int productId, [FromBody] OrderItem orderItem, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
         {
@@ -79,6 +80,10 @@ namespace WebApplication1.Controllers
             }
             else
             {
+                return NotFound("Заказ с указанным идентификатором не найден.");
+            }
+        }
+
                 return NotFound("No se ha encontrado el pedido con el identificador especificado.");
             }
         }
@@ -175,6 +180,9 @@ namespace WebApplication1.Controllers
                 return Unauthorized("El usuario no está autorizado o no existe");
             }
         }
-
     }
 }
+//?????
+    }
+}
+
