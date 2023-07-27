@@ -25,6 +25,8 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost(Name = "insertUsers")]
+
+        //Unidad de verificación de los derechos de acceso
         public int Post([FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] UserItem userItem)
         {
             var seletedUser = _serviceContext.Set<UserItem>()
@@ -115,6 +117,5 @@ namespace WebApplication1.Controllers
                 return Unauthorized("El usuario no está autorizado o no existe");
             }
         }
-
     }
 }

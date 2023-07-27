@@ -19,9 +19,14 @@ namespace Entities
         public string Contraseña { get; set; }
 
         [Required]
+        public string Email { get; set; }
+
+        [Required]
         public int Rol { get; set; }
 
         [JsonIgnore]
-        public object Users { get; set; }
+        public string Users { get; set; }
+        public List<AuditLog> AuditLogs { get; set; }
+
     }
 }

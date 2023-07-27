@@ -1,10 +1,17 @@
-﻿using Data;
+using Data;
 using Entities;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Authentication;
+using Microsoft.EntityFrameworkCore;
+using System.Web.Http.Cors;
 using WebApplication1.IServices;
+using WebApplication1.Services;
 
 namespace WebApplication1.Controllers
 {
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
+    [Route("[controller]/[action]")]
+
     public class OrderController : ControllerBase
     {
         private readonly IOrderService _orderService;
@@ -16,6 +23,7 @@ namespace WebApplication1.Controllers
             _serviceContext = serviceContext;
         }
 
+        // Añadir pedidos
 
         [HttpPost("Order/Post", Name = "InsertOrder")]
         public IActionResult CreateOrder(int productId, [FromBody] OrderItem orderItem, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
@@ -30,9 +38,21 @@ namespace WebApplication1.Controllers
             {
                 if (orderItem != null)
                 {
+
                     var newOrderItem = new OrderItem();
                     newOrderItem.ProductId = productId;
                     newOrderItem.CustomerName = orderItem.CustomerName;
+
+                    // Журналирование действия создания заказа
+                    _serviceContext.AuditLogs.Add(new AuditLog
+                    {
+                        Action = "Insert",
+                        TableName = "Orders",
+                        RecordId = newOrderItem.Id,
+                        Timestamp = DateTime.Now,
+                        UserId = seletedUser.IdUsuario
+                    });
+                    // Просто устанавливаем ProductId, не создавая новый экземпляр OrderItem
                     _serviceContext.Orders.Add(newOrderItem);
                     _serviceContext.SaveChanges();
 
@@ -49,7 +69,7 @@ namespace WebApplication1.Controllers
             }
         }
 
-
+        //recuperación de pedidos de la tabla Ordens por Id
         [HttpGet("Order/Get", Name = "GetOrder")]
         public IActionResult Get(int orderId)
         {
@@ -64,6 +84,11 @@ namespace WebApplication1.Controllers
             }
         }
 
+                return NotFound("No se ha encontrado el pedido con el identificador especificado.");
+            }
+        }
+
+        // Modificar registros de la tabla Orders
         [HttpPut("Order/UpdateOrder", Name = "UpdateOrder")]
         public IActionResult UpdateOrder(int orderId, [FromBody] OrderItem updatedOrder, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
         {
@@ -79,6 +104,16 @@ namespace WebApplication1.Controllers
 
                 if (order != null)
                 {
+                    // Журналирование действия обновления заказа
+                    _serviceContext.AuditLogs.Add(new AuditLog
+                    {
+                        Action = "Update",
+                        TableName = "Orders",
+                        RecordId = orderId,
+                        Timestamp = DateTime.Now,
+                        UserId = seletedUser.IdUsuario // Добавляем информацию о UserId в AuditLog
+                    });
+                    // Actualización de los valores de los campos del pedido utilizando datos del updatedOrder
                     order.CustomerName = updatedOrder.CustomerName;
                     order.Quantity = updatedOrder.Quantity;
 
@@ -98,7 +133,7 @@ namespace WebApplication1.Controllers
         }
 
 
-
+        //eliminar una orden de la tabla Orders по Id
         [HttpDelete("Order/Delete/{orderId}", Name = "DeleteOrder")]
         public IActionResult Delete(int orderId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
         {
@@ -110,10 +145,20 @@ namespace WebApplication1.Controllers
 
             if (seletedUser != null)
             {
+                // Журналирование действия удаления заказа
+                _serviceContext.AuditLogs.Add(new AuditLog
+                {
+                    Action = "Delete",
+                    TableName = "Orders",
+                    RecordId = orderId,
+                    Timestamp = DateTime.Now,
+                    UserId = seletedUser.IdUsuario // Добавляем информацию о UserId в AuditLog
+                });
                 var order = _serviceContext.Orders.Find(orderId);
 
                 if (order != null)
                 {
+                    // Llamar al método para eliminar un pedido por identificador
                     bool isDeleted = _serviceContext.RemoveOrderById(orderId);
 
                     if (isDeleted)
@@ -137,3 +182,7 @@ namespace WebApplication1.Controllers
         }
     }
 }
+//?????
+    }
+}
+
