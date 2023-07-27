@@ -9,17 +9,17 @@ namespace Entities
 {
     public class ProductItem
     {
-        public int Id { get; set; }
+        public int ProductId { get; set; }
         public string ProductName { get; set; }
         public string BrandName { get; set; }
         public string ProductModel { get; set; }
-        public string typeOfFootwear { get; set; }
-        public string recipient { get; set; }
-        public string size { get; set; } 
-        public string color { get; set; }
+        public string TypeOfFootwear { get; set; }
+        public string Recipient { get; set; }
+        public string Size { get; set; } 
+        public string Color { get; set; }
         public int Productstock { get; set; }
-        public int price { get; set; }
-        public string discount { get; set; }
+        public int Price { get; set; }
+        public string Discount { get; set; }
 
         // Навигационное свойство для связи с заказами
         [JsonIgnore]

@@ -102,6 +102,15 @@ namespace WebApplication1.Controllers
 
             if (seletedUser != null)
             {
+                // Журналирование действия
+                _serviceContext.AuditLogs.Add(new AuditLog
+                {
+                    Action = "Delete",
+                    TableName = "Users",
+                    //RecordId = IdRol,
+                    Timestamp = DateTime.Now,
+                    UserId = seletedUser.IdUsuario // Добавляем информацию о UserId в AuditLog
+                });
                 var user = _serviceContext.Users.Find(userId);
 
                 if (user != null)

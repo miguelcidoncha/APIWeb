@@ -70,111 +70,168 @@ namespace WebApplication1.Controllers
         }
 
         //Pedir un producto de la tabla Products por su Id
-        [HttpGet("productId", Name = "GetProduct")]
+        [HttpGet("{productId}", Name = "GetProduct")]
         public IActionResult Get(int productId)
         {
-            var product = _serviceContext.Products.Include(p => p.Orders).FirstOrDefault(p => p.Id == productId);
-            if (product != null)
+            try
             {
-                return Ok(product);
-            }
-            else
-            {
-                return NotFound("No se ha encontrado el producto con el identificador especificado.");
-            }
-        }
-        
-        // modificar registros de la tabla "Products"
-        // модифицировать записи в таблице "Products"
-        [HttpPut(Name = "UpdateProduct")]
-        public IActionResult UpdateProduct(int productId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] ProductItem updatedProduct)
-        {
-            var seletedUser = _serviceContext.Set<UserItem>()
-                                   .Where(u => u.NombreUsuario == userNombreUsuario
-                                        && u.Contraseña == userContraseña
-                                        && u.IdRol == 1)
-                                    .FirstOrDefault();
-
-            if (seletedUser != null)
-            {
-                var product = _serviceContext.Products.FirstOrDefault(p => p.Id == productId);
-
+                var product = _serviceContext.Products.Include(p => p.Orders).FirstOrDefault(p => p.ProductId == productId);
                 if (product != null)
                 {
-                    // Журналирование действия обновления продукта
-                    _serviceContext.AuditLogs.Add(new AuditLog
-                    {
-                        Action = "Update",
-                        TableName = "Products",
-                        RecordId = productId,
-                        Timestamp = DateTime.Now,
-                        UserId = seletedUser.IdUsuario // Добавляем информацию о UserId в AuditLog
-                    });
-                    // Обновляем значения полей продукта с помощью данных из updatedProduct
-                    product.ProductName = updatedProduct.ProductName;
-                    product.BrandName = updatedProduct.BrandName;
-                    product.Productstock = updatedProduct.Productstock;
-
-                    _serviceContext.SaveChanges();
-
-                    return Ok("El producto se ha actualizado correctamente.");
+                    return Ok(product);
                 }
                 else
                 {
                     return NotFound("No se ha encontrado el producto con el identificador especificado.");
                 }
             }
-            else
+            catch (Exception ex)
             {
-                return Unauthorized("El usuario no está autorizado o no existe");
+                return StatusCode(500, "Error al obtener el producto: " + ex.Message);
             }
         }
+
+        //Поиск по полю BrandName
+        [HttpGet("SearchByBrand", Name = "SearchProductByBrand")]
+        public IActionResult SearchByBrand([FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromQuery] string brandName)
+        {
+            try
+            {
+                var seletedUser = _serviceContext.Set<UserItem>()
+                                       .FirstOrDefault(u => u.NombreUsuario == userNombreUsuario
+                                            && u.Contraseña == userContraseña
+                                            && u.IdRol == 1);
+
+                if (seletedUser == null)
+                {
+                    return Unauthorized("El usuario no está autorizado o no existe");
+                }
+
+                var products = _serviceContext.Products
+                    .Where(p => p.BrandName.Contains(brandName)) // Используем метод Contains для поиска по части значения BrandName
+                    .ToList();
+
+                if (products.Count > 0)
+                {
+                    return Ok(products); // Возвращаем список продуктов, удовлетворяющих условию поиска
+                }
+                else
+                {
+                    return NotFound("No se han encontrado productos con la marca especificada.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error al realizar la búsqueda por marca: " + ex.Message);
+            }
+        }
+
+
+        // modificar registros de la tabla "Products"
+        // модифицировать записи в таблице "Products"
+        [HttpPut("{productId}", Name = "UpdateProduct")]
+        public IActionResult UpdateProduct(int productId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] ProductItem updatedProduct)
+        {
+            try
+            {
+                var seletedUser = _serviceContext.Set<UserItem>()
+                                       .Where(u => u.NombreUsuario == userNombreUsuario
+                                            && u.Contraseña == userContraseña
+                                            && u.IdRol == 1)
+                                        .FirstOrDefault();
+
+                if (seletedUser != null)
+                {
+                    var product = _serviceContext.Products.FirstOrDefault(p => p.ProductId == productId);
+
+                    if (product != null)
+                    {
+                        // Журналирование действия обновления продукта
+                        _serviceContext.AuditLogs.Add(new AuditLog
+                        {
+                            Action = "Update",
+                            TableName = "Products",
+                            RecordId = productId,
+                            Timestamp = DateTime.Now,
+                            UserId = seletedUser.IdUsuario // Добавляем информацию о UserId в AuditLog
+                        });
+                        // Обновляем значения полей продукта с помощью данных из updatedProduct
+                        product.ProductName = updatedProduct.ProductName;
+                        product.BrandName = updatedProduct.BrandName;
+                        product.Productstock = updatedProduct.Productstock;
+
+                        _serviceContext.SaveChanges();
+
+                        return Ok("El producto se ha actualizado correctamente.");
+                    }
+                    else
+                    {
+                        return NotFound("No se ha encontrado el producto con el identificador especificado.");
+                    }
+                }
+                else
+                {
+                    return Unauthorized("El usuario no está autorizado o no existe");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error al actualizar el producto: " + ex.Message);
+            }
+        }
+
 
         //eliminar un producto de la tabla Products по Id
         // Удалить запись из таблицы "Products"
         [HttpDelete("{productId}", Name = "DeleteProduct")]
         public IActionResult Delete(int productId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
         {
-            var seletedUser = _serviceContext.Set<UserItem>()
-                                   .FirstOrDefault(u => u.NombreUsuario == userNombreUsuario
-                                        && u.Contraseña == userContraseña
-                                        && u.IdRol == 1);
-
-            if (seletedUser == null)
+            try
             {
-                return Unauthorized("El usuario no está autorizado o no existe");
+                var seletedUser = _serviceContext.Set<UserItem>()
+                                       .FirstOrDefault(u => u.NombreUsuario == userNombreUsuario
+                                            && u.Contraseña == userContraseña
+                                            && u.IdRol == 1);
+
+
+                if (seletedUser == null)
+                {
+                    return Unauthorized("El usuario no está autorizado o no existe");
+                }
+
+                var product = _serviceContext.Products.Find(productId);
+
+                if (product == null)
+                {
+                    return NotFound("No se ha encontrado el producto con el identificador especificado.");
+                }
+
+                // Журналирование действия удаления продукта
+                _serviceContext.AuditLogs.Add(new AuditLog
+                {
+                    Action = "Delete",
+                    TableName = "Products",
+                    RecordId = productId,
+                    Timestamp = DateTime.Now,
+                    UserId = seletedUser.IdUsuario // Добавляем информацию о UserId в AuditLog
+                });
+
+                // Вызываем метод для удаления продукта по идентификатору
+                bool isDeleted = _serviceContext.RemoveProductById(productId);
+
+                if (isDeleted)
+                {
+                    return Ok("El producto se ha eliminado correctamente.");
+                }
+                else
+                {
+                    return BadRequest("Error al eliminar un producto.");
+                }
             }
-
-            var product = _serviceContext.Products.Find(productId);
-
-            if (product == null)
+            catch (Exception ex)
             {
-                return NotFound("No se ha encontrado el producto con el identificador especificado.");
-            }
-
-            // Журналирование действия удаления продукта
-            _serviceContext.AuditLogs.Add(new AuditLog
-            {
-                Action = "Delete",
-                TableName = "Products",
-                RecordId = productId,
-                Timestamp = DateTime.Now,
-                UserId = seletedUser.IdUsuario // Добавляем информацию о UserId в AuditLog
-            });
-
-            // Вызываем метод для удаления продукта по идентификатору
-            bool isDeleted = _serviceContext.RemoveProductById(productId);
-
-            if (isDeleted)
-            {
-                return Ok("El producto se ha eliminado correctamente.");
-            }
-            else
-            {
-                return BadRequest("Error al eliminar un producto.");
+                return StatusCode(500, "Error al eliminar el producto: " + ex.Message);
             }
         }
-
-
     }
 }

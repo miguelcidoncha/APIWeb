@@ -27,6 +27,7 @@ namespace Data
             builder.Entity<ProductItem>(entity =>         // Конфигурация модели ProductItem
             {
                 entity.ToTable("Products");
+                entity.HasKey(p => p.ProductId);
             });
 
             builder.Entity<UserItem>(entity =>             // Задаем связь с таблицей "Users" по идентификатору IdUsuario    
@@ -65,19 +66,16 @@ namespace Data
 
             base.OnModelCreating(builder);
         }
-        
+
 
         // Метод для удаления записи из таблицы "Products" по идентификатору
         public bool RemoveProductById(int productId)
         {
-            // Находим запись, которую хотим удалить, по ее идентификатору
-            var productToRemove = Products.FirstOrDefault(p => p.Id == productId);
+            var productToRemove = Products.FirstOrDefault(p => p.ProductId == productId);
 
-            // Проверяем, была ли найдена запись
             if (productToRemove != null)
             {
                 Products.Remove(productToRemove);
-
                 SaveChanges();
                 return true; // Успешное удаление
             }
