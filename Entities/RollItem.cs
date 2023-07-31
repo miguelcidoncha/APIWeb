@@ -8,7 +8,7 @@ namespace Entities
 {
     public class RollItem
     {
-        public int IdRoll { get; set; }
+        public ushort IdRoll { get; set; }
 
         public string RollName { get; set; }
     }

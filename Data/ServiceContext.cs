@@ -20,6 +20,7 @@ namespace Data
         public DbSet<RollItem> RollUser { get; set; }
         public DbSet<OrderItem> Orders { get; set; } //Добавляем DbSet для заказов
         public DbSet<AuditLog> AuditLogs { get; set; } //Добавляем DbSet для логирования
+        public DbSet<OrderStatus> OrderStatuses { get; set; } //Добавляем DbSet состояние заказа
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -46,11 +47,14 @@ namespace Data
             builder.Entity<OrderItem>(entity =>             // Конфигурация модели OrderItem
             {
                 entity.ToTable("Orders");
-                entity.HasKey(o => o.IdOrder);                   // Задаем связь с таблицей "Products" по идентификатору продукта
-                entity.HasOne(o => o.Product)
+                entity.HasKey(o => o.IdOrder);
+                entity.HasOne(o => o.Product)               // Задаем связь с таблицей "Products" по идентификатору продукта
                       .WithMany(p => p.Orders)
-                      .HasForeignKey(o => o.ProductId)
-                      .OnDelete(DeleteBehavior.NoAction); // Задаем правило удаления NO ACTION
+                      .HasForeignKey(o => o.ProductId);
+                entity.HasOne(o => o.OrderStatus)           // Задаем связь с таблицей OrderStatus по идентификатору состояния заказа
+                    .WithMany()
+                    .HasForeignKey(o => o.OrderStatusId)
+                    .OnDelete(DeleteBehavior.NoAction); // Задаем правило удаления NO ACTION
             });
 
             builder.Entity<AuditLog>(entity =>              // Конфигурация модели AuditLog
@@ -63,12 +67,17 @@ namespace Data
                       .HasForeignKey(a => a.UserId)
                       .OnDelete(DeleteBehavior.Restrict);
             });
-
-            base.OnModelCreating(builder);
+            
+            builder.Entity<OrderStatus>(entity =>           // Конфигурация модели OrderStatus
+            {
+                entity.ToTable("OrderStatuses");
+                entity.HasKey(os => os.OrderStatusId);
+                base.OnModelCreating(builder);
+            });
         }
 
 
-        // Метод для удаления записи из таблицы "Products" по идентификатору
+        // Метод для удаления записи из таблицы "Products" по productId
         public bool RemoveProductById(int productId)
         {
             var productToRemove = Products.FirstOrDefault(p => p.ProductId == productId);
@@ -118,6 +127,29 @@ namespace Data
             return false; // Запись с указанным идентификатором не найдена
         }
 
+        // Метод для сохранения заказа
+        public void SaveOrder(OrderItem orderItem)
+        {
+            // Проверяем, существует ли указанный OrderStatusId в таблице OrderStatuses
+            bool orderStatusExists = OrderStatuses.Any(os => os.OrderStatusId == orderItem.OrderStatusId);
+
+            if (orderStatusExists)
+            {
+                // Получаем объект OrderStatus по его OrderStatusId
+                var orderStatus = OrderStatuses.Find(orderItem.OrderStatusId);
+
+                // Присваиваем объект OrderStatus объекту OrderItem
+                orderItem.OrderStatus = orderStatus;
+
+                // Сохраняем объект OrderItem
+                Orders.Add(orderItem);
+                SaveChanges();
+            }
+            else
+            {
+                throw new Exception("Invalid OrderStatusId. The specified OrderStatusId does not exist.");
+            }
+        }
 
 
     }

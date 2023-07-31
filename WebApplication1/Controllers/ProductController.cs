@@ -50,6 +50,7 @@ namespace WebApplication1.Controllers
                     {
                         Action = "Insert",
                         TableName = "Products",
+                        RecordId = productId,
                         Timestamp = DateTime.Now,
                         UserId = seletedUser.IdUsuario
                     });
@@ -130,7 +131,7 @@ namespace WebApplication1.Controllers
         // modificar registros de la tabla "Products"
         // модифицировать записи в таблице "Products"
         [HttpPut("{productId}", Name = "UpdateProduct")]
-        public IActionResult UpdateProduct(int productId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] ProductItem updatedProduct)
+        public IActionResult UpdateProduct(ushort productId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] ProductItem updatedProduct)
         {
             try
             {
@@ -158,7 +159,7 @@ namespace WebApplication1.Controllers
                         // Обновляем значения полей продукта с помощью данных из updatedProduct
                         product.ProductName = updatedProduct.ProductName;
                         product.BrandName = updatedProduct.BrandName;
-                        product.Productstock = updatedProduct.Productstock;
+                        product.ProductStock = updatedProduct.ProductStock;
 
                         _serviceContext.SaveChanges();
 
@@ -184,7 +185,7 @@ namespace WebApplication1.Controllers
         //eliminar un producto de la tabla Products по Id
         // Удалить запись из таблицы "Products"
         [HttpDelete("{productId}", Name = "DeleteProduct")]
-        public IActionResult Delete(int productId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
+        public IActionResult Delete(ushort productId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
         {
             try
             {

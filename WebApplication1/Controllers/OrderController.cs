@@ -25,40 +25,45 @@ namespace WebApplication1.Controllers
 
         // Añadir pedidos
         [HttpPost("Order/Post", Name = "InsertOrder")]
-        public IActionResult CreateOrder(int productId, [FromBody] OrderItem orderItem, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
+        public IActionResult CreateOrder(ushort productId, [FromBody] OrderItem orderItem, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
         {
             var seletedUser = _serviceContext.Set<UserItem>()
-                                   .Where(u => u.NombreUsuario == userNombreUsuario
+                                    .Where(u => u.NombreUsuario == userNombreUsuario
                                         && u.Contraseña == userContraseña
                                         && (u.IdRol == 1 || u.IdRol == 2))
-
                                     .FirstOrDefault();
 
             if (seletedUser != null)
             {
-                if (orderItem != null)
+                if (orderItem != null) 
                 {
-                    var newOrderItem = new OrderItem();
-                    newOrderItem.ProductId = productId;
-                    newOrderItem.CustomerName = orderItem.CustomerName;
+                        // Проверяем, есть ли у заказа уже IdOrder, и если есть, проверяем, что такой заказ не существует в базе данных
+                        if (orderItem.IdOrder != 0)
+                        {
+                            var existingOrder = _serviceContext.Orders.FirstOrDefault(o => o.IdOrder == orderItem.IdOrder);
+                            if (existingOrder != null)
+                            {
+                                return BadRequest("Order with the specified IdOrder already exists.");
+                            }
+                        }
 
-                    // Просто устанавливаем ProductId, не создавая новый экземпляр OrderItem
-                    _serviceContext.Orders.Add(newOrderItem);
-                    _serviceContext.SaveChanges();
+                        // Добавляем заказ в контекст данных
+                        _serviceContext.Orders.Add(orderItem);
 
-                    // Журналирование действия создания заказа
-                    _serviceContext.AuditLogs.Add(new AuditLog
-                    {
-                        Action = "Insert",
-                        TableName = "Orders",
-                        RecordId = newOrderItem.IdOrder, // Здесь уже есть значение IdOrder из базы данных
-                        Timestamp = DateTime.Now,
-                        UserId = seletedUser.IdUsuario
-                    });
+                        // Журналирование действия создания заказа
+                        _serviceContext.AuditLogs.Add(new AuditLog
+                        {
+                            Action = "Insert",
+                            TableName = "Orders",
+                            RecordId = orderItem.IdOrder,
+                            Timestamp = DateTime.Now,
+                            UserId = seletedUser.IdUsuario
+                        });
 
-                    _serviceContext.SaveChanges(); // Сохраняем изменения в базу данных
+                        // Сохраняем изменения в базе данных
+                        _serviceContext.SaveChanges();
 
-                    return Ok("El pedido se ha creado correctamente.");
+                        return Ok("El pedido se ha creado correctamente.");
                 }
                 else
                 {
@@ -74,7 +79,7 @@ namespace WebApplication1.Controllers
 
         //recuperación de pedidos de la tabla Ordens por Id
         [HttpGet("Order/Get", Name = "GetOrder")]
-        public IActionResult Get(int orderId)
+        public IActionResult Get(ushort orderId)
         {
             var order = _serviceContext.Orders.FirstOrDefault(p => p.IdOrder == orderId);
             if (order != null)
@@ -89,7 +94,7 @@ namespace WebApplication1.Controllers
 
         // Modificar registros de la tabla Orders
         [HttpPut("Order/UpdateOrder", Name = "UpdateOrder")]
-        public IActionResult UpdateOrder(int orderId, [FromBody] OrderItem updatedOrder, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
+        public IActionResult UpdateOrder(ushort orderId, [FromBody] OrderItem updatedOrder, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
         {
             var seletedUser = _serviceContext.Set<UserItem>()
                                    .Where(u => u.NombreUsuario == userNombreUsuario
@@ -114,7 +119,7 @@ namespace WebApplication1.Controllers
                     });
                     // Actualización de los valores de los campos del pedido utilizando datos del updatedOrder
                     order.CustomerName = updatedOrder.CustomerName;
-                    order.Productstock = updatedOrder.Productstock;
+                    order.ProductStock = updatedOrder.ProductStock;
 
                     _serviceContext.SaveChanges();
 
@@ -134,7 +139,7 @@ namespace WebApplication1.Controllers
 
         //eliminar una orden de la tabla Orders по Id
         [HttpDelete("Order/Delete/{orderId}", Name = "DeleteOrder")]
-        public IActionResult Delete(int orderId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
+        public IActionResult Delete(ushort orderId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
         {
             var seletedUser = _serviceContext.Set<UserItem>()
                                    .Where(u => u.NombreUsuario == userNombreUsuario

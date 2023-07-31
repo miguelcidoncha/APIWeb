@@ -16,7 +16,7 @@ namespace Entities
         public string NombreUsuario { get; set; }
 
         [Required]
-        public int IdRol { get; set; }
+        public ushort IdRol { get; set; }
 
         [Required]
         public string Contraseña { get; set; }

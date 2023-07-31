@@ -41,9 +41,9 @@ namespace WebApplication1.Controllers
                 {
                     Action = "Insert",
                     TableName = "Users",
-                    //RecordId = IdRol,
+                    //RecordId = userItem.IdRol,
                     Timestamp = DateTime.Now,
-                    UserId = seletedUser.IdUsuario // Добавляем информацию о UserId в AuditLog
+                    UserId = seletedUser.IdUsuario
                 });
                 return _userService.insertUsers(userItem);
             }
@@ -107,7 +107,7 @@ namespace WebApplication1.Controllers
                 {
                     Action = "Delete",
                     TableName = "Users",
-                    //RecordId = IdRol,
+                    //RecordId = userId,
                     Timestamp = DateTime.Now,
                     UserId = seletedUser.IdUsuario // Добавляем информацию о UserId в AuditLog
                 });
