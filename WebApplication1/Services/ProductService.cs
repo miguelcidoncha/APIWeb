@@ -14,7 +14,7 @@ namespace WebApplication1.Services
         {
             _serviceContext.Products.Add(productItem);
             _serviceContext.SaveChanges();
-            return productItem.Id;
+            return productItem.ProductId;
         }
     }
 }
