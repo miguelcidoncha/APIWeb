@@ -10,7 +10,7 @@ namespace WebApplication1.Services
         {
         }
 
-        public int insertUsers(UserItem userItem)
+        public int InsertUsers(UserItem userItem)
         {
             _serviceContext.Users.Add(userItem);
             _serviceContext.SaveChanges();

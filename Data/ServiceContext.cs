@@ -21,6 +21,7 @@ namespace Data
         public DbSet<OrderItem> Orders { get; set; } //Добавляем DbSet для заказов
         public DbSet<AuditLog> AuditLogs { get; set; } //Добавляем DbSet для логирования
         public DbSet<OrderStatus> OrderStatuses { get; set; } //Добавляем DbSet состояние заказа
+        public DbSet<ImageItem> Images { get; set; } 
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -29,6 +30,17 @@ namespace Data
             {
                 entity.ToTable("Products");
                 entity.HasKey(p => p.ProductId);
+            });
+
+            builder.Entity<ProductItem>()
+                .HasMany(p => p.ImageItem)
+                .WithOne(i => i.Product)
+                .HasForeignKey(i => i.ProductId);
+
+            builder.Entity<ImageItem>(entity =>    // Конфигурация таблицы "Images"
+            {
+                entity.ToTable("Images");
+                entity.HasKey(i => i.IdImage);
             });
 
             builder.Entity<UserItem>(entity =>             // Задаем связь с таблицей "Users" по идентификатору IdUsuario    

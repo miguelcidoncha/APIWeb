@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -24,6 +25,16 @@ namespace Entities
         // Навигационное свойство для связи с заказами
         [JsonIgnore]
         public ICollection<OrderItem> Orders { get; set; }
+
+        // Навигационное свойство для связи с изображениями
+        [JsonIgnore]
+        public ICollection<ImageItem> ImageItem { get; set; }
+
+        public ProductItem()
+        {
+            // Инициализация коллекции ImageItems
+            ImageItem = new List<ImageItem>();
+        }
     }
 
 }

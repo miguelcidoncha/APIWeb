@@ -44,7 +44,7 @@ namespace WebApplication1.Controllers
                 if (seletedUser != null)
                 {
                     // Выполняем добавление продукта
-                    int productId = _productService.insertProduct(productItem);
+                    int productId = _productService.InsertProduct(productItem);
                     // Журналирование действия добавления продукта
                     _serviceContext.AuditLogs.Add(new AuditLog
                     {

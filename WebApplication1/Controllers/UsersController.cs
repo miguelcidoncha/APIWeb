@@ -45,7 +45,7 @@ namespace WebApplication1.Controllers
                     Timestamp = DateTime.Now,
                     UserId = seletedUser.IdUsuario
                 });
-                return _userService.insertUsers(userItem);
+                return _userService.InsertUsers(userItem);
             }
             else
             {
