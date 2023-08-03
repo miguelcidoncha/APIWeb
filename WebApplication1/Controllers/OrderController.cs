@@ -37,7 +37,7 @@ namespace WebApplication1.Controllers
             {
                 if (orderItem != null)
                 {
-                    // Проверяем, есть ли у заказа уже IdOrder, и если есть, проверяем, что такой заказ не существует в базе данных
+                    // Comprobar si el pedido ya tiene un IdOrder, y si lo tiene, comprobar que este pedido no existe en la base de datos.
                     if (orderItem.IdOrder != 0)
                     {
                         var existingOrder = _serviceContext.Orders.FirstOrDefault(o => o.IdOrder == orderItem.IdOrder);
@@ -47,10 +47,10 @@ namespace WebApplication1.Controllers
                         }
                     }
 
-                    // Добавляем заказ в контекст данных
+                    // Añadir una orden al contexto de datos
                     _serviceContext.Orders.Add(orderItem);
 
-                    // Журналирование действия создания заказа
+                    // Registro de la acción de crear una orden
                     _serviceContext.AuditLogs.Add(new AuditLog
                     {
                         Action = "Insert",
@@ -60,7 +60,7 @@ namespace WebApplication1.Controllers
                         UserId = seletedUser.IdUsuario
                     });
 
-                    // Сохраняем изменения в базе данных
+                    // Guardar los cambios en la base de datos
                     _serviceContext.SaveChanges();
 
                     return Ok("El pedido se ha creado correctamente.");
@@ -108,14 +108,14 @@ namespace WebApplication1.Controllers
 
                 if (order != null)
                 {
-                    // Журналирование действия обновления заказа
+                    // Registro de la acción de actualización del pedido
                     _serviceContext.AuditLogs.Add(new AuditLog
                     {
                         Action = "Update",
                         TableName = "Orders",
                         RecordId = orderId,
                         Timestamp = DateTime.Now,
-                        UserId = seletedUser.IdUsuario // Добавляем информацию о UserId в AuditLog
+                        UserId = seletedUser.IdUsuario // Añadir información de UserId a AuditLog
                     });
                     // Actualización de los valores de los campos del pedido utilizando datos del updatedOrder
                     order.CustomerName = updatedOrder.CustomerName;
@@ -149,14 +149,14 @@ namespace WebApplication1.Controllers
 
             if (seletedUser != null)
             {
-                // Журналирование действия удаления заказа
+                // Registro de la acción de supresión de pedidos
                 _serviceContext.AuditLogs.Add(new AuditLog
                 {
                     Action = "Delete",
                     TableName = "Orders",
                     RecordId = orderId,
                     Timestamp = DateTime.Now,
-                    UserId = seletedUser.IdUsuario // Добавляем информацию о UserId в AuditLog
+                    UserId = seletedUser.IdUsuario // Añadir información de UserId a AuditLog
                 });
                 var order = _serviceContext.Orders.Find(orderId);
 

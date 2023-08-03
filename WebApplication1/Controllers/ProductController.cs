@@ -30,7 +30,7 @@ namespace WebApplication1.Controllers
         [HttpPost(Name = "InsertProduct")]
 
         //Unidad de verificación de los derechos de acceso
-        //возвращаю Ok(productId), где productId - это IActionResult для метода с атрибутом HttpPost.
+        //devuelve Ok(productId), donde productId es el IActionResult del método con el atributo HttpPost.
         public IActionResult Post([FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] ProductItem productItem)
         {
             try
@@ -43,9 +43,9 @@ namespace WebApplication1.Controllers
 
                 if (seletedUser != null)
                 {
-                    // Выполняем добавление продукта
+                    // Añadir un producto
                     int productId = _productService.insertProduct(productItem);
-                    // Журналирование действия добавления продукта
+                    // Registro de la acción de añadir un producto
                     _serviceContext.AuditLogs.Add(new AuditLog
                     {
                         Action = "Insert",
@@ -54,14 +54,13 @@ namespace WebApplication1.Controllers
                         Timestamp = DateTime.Now,
                         UserId = seletedUser.IdUsuario
                     });
-                    _serviceContext.SaveChanges(); // Сохраняем изменения в базу данных
+                    _serviceContext.SaveChanges(); // Guardar los cambios en la base de datos
 
-                    return Ok(productId); // // Возвращаем статус 200 OK с данными productId
+                    return Ok(productId);  // Devuelve el estado 200 OK con los datos productId
                 }
                 else
                 {
-                    //throw new InvalidCredentialException("El ususario no esta autorizado o no existe");
-                    return BadRequest("Usuario no autorizado o no encontrado"); // Возвращаем сообщение об ошибке
+                    return BadRequest("Usuario no autorizado o no encontrado"); // Mensaje de error
                 }
             }
             catch (Exception ex)
@@ -71,28 +70,28 @@ namespace WebApplication1.Controllers
         }
 
         //Pedir un producto de la tabla Products por su Id
-        [HttpGet("{productId}", Name = "GetProduct")]
-        public IActionResult Get(int productId)
-        {
-            try
-            {
-                var product = _serviceContext.Products.Include(p => p.Orders).FirstOrDefault(p => p.ProductId == productId);
-                if (product != null)
-                {
-                    return Ok(product);
-                }
-                else
-                {
-                    return NotFound("No se ha encontrado el producto con el identificador especificado.");
-                }
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Error al obtener el producto: " + ex.Message);
-            }
-        }
+        //[HttpGet("{productId}", Name = "GetProduct")]
+        //public IActionResult Get(int productId)
+        //{
+        //    try
+        //    {
+        //        var product = _serviceContext.Products.Include(p => p.Orders).FirstOrDefault(p => p.ProductId == productId);
+        //        if (product != null)
+        //        {
+        //            return Ok(product);
+        //        }
+        //        else
+        //        {
+        //            return NotFound("No se ha encontrado el producto con el identificador especificado.");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, "Error al obtener el producto: " + ex.Message);
+        //    }
+        //}
 
-        //Поиск по полю BrandName
+        //Buscar por marca
         [HttpGet("SearchByBrand", Name = "SearchProductByBrand")]
         public IActionResult SearchByBrand([FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromQuery] string brandName)
         {
@@ -100,21 +99,20 @@ namespace WebApplication1.Controllers
             {
                 var seletedUser = _serviceContext.Set<UserItem>()
                                        .FirstOrDefault(u => u.NombreUsuario == userNombreUsuario
-                                            && u.Contraseña == userContraseña
-                                            && u.IdRol == 1);
+                                            && u.Contraseña == userContraseña);
 
                 if (seletedUser == null)
                 {
-                    return Unauthorized("El usuario no está autorizado o no existe");
+                    return Unauthorized("El usuario no existe");
                 }
 
                 var products = _serviceContext.Products
-                    .Where(p => p.BrandName.Contains(brandName)) // Используем метод Contains для поиска по части значения BrandName
+                    .Where(p => p.BrandName.Contains(brandName)) // Utilice el método Contains para buscar una parte del valor BrandName
                     .ToList();
 
                 if (products.Count > 0)
                 {
-                    return Ok(products); // Возвращаем список продуктов, удовлетворяющих условию поиска
+                    return Ok(products); // Devuelve la lista de productos que cumplen la condición de búsqueda
                 }
                 else
                 {
@@ -129,7 +127,7 @@ namespace WebApplication1.Controllers
 
 
         // modificar registros de la tabla "Products"
-        // модифицировать записи в таблице "Products"
+        // modificar los registros de la tabla "Productos
         [HttpPut("{productId}", Name = "UpdateProduct")]
         public IActionResult UpdateProduct(ushort productId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] ProductItem updatedProduct)
         {
@@ -147,19 +145,26 @@ namespace WebApplication1.Controllers
 
                     if (product != null)
                     {
-                        // Журналирование действия обновления продукта
+                        // Registro de la acción de actualización de un producto
                         _serviceContext.AuditLogs.Add(new AuditLog
                         {
                             Action = "Update",
                             TableName = "Products",
                             RecordId = productId,
                             Timestamp = DateTime.Now,
-                            UserId = seletedUser.IdUsuario // Добавляем информацию о UserId в AuditLog
+                            UserId = seletedUser.IdUsuario // Añadir información de UserId a AuditLog
                         });
-                        // Обновляем значения полей продукта с помощью данных из updatedProduct
+                        // Actualizar los valores de los campos del producto utilizando los datos de updatedProduct
                         product.ProductName = updatedProduct.ProductName;
                         product.BrandName = updatedProduct.BrandName;
+                        product.ProductModel = updatedProduct.ProductModel;
+                        product.TypeOfFootwear = updatedProduct.TypeOfFootwear;
+                        product.Recipient = updatedProduct.Recipient;
+                        product.ProductSize = updatedProduct.ProductSize; 
+                        product.ProductColor = updatedProduct.ProductColor;
                         product.ProductStock = updatedProduct.ProductStock;
+                        product.ProductPrice = updatedProduct.ProductPrice;
+                        product.Discount = updatedProduct.Discount;
 
                         _serviceContext.SaveChanges();
 
@@ -183,7 +188,7 @@ namespace WebApplication1.Controllers
 
 
         //eliminar un producto de la tabla Products по Id
-        // Удалить запись из таблицы "Products"
+        // Eliminar un registro de la tabla "Productos
         [HttpDelete("{productId}", Name = "DeleteProduct")]
         public IActionResult Delete(ushort productId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
         {
@@ -207,17 +212,17 @@ namespace WebApplication1.Controllers
                     return NotFound("No se ha encontrado el producto con el identificador especificado.");
                 }
 
-                // Журналирование действия удаления продукта
+                // Registro de la acción de retirada del producto
                 _serviceContext.AuditLogs.Add(new AuditLog
                 {
                     Action = "Delete",
                     TableName = "Products",
                     RecordId = productId,
                     Timestamp = DateTime.Now,
-                    UserId = seletedUser.IdUsuario // Добавляем информацию о UserId в AuditLog
+                    UserId = seletedUser.IdUsuario // Añadir información de UserId a AuditLog
                 });
 
-                // Вызываем метод для удаления продукта по идентификатору
+                // Llamar al método para eliminar un producto por identificador
                 bool isDeleted = _serviceContext.RemoveProductById(productId);
 
                 if (isDeleted)
