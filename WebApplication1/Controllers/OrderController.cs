@@ -29,8 +29,7 @@ namespace WebApplication1.Controllers
         {
             var seletedUser = _serviceContext.Set<UserItem>()
                                     .Where(u => u.NombreUsuario == userNombreUsuario
-                                        && u.Contraseña == userContraseña
-                                        && (u.IdRol == 1 || u.IdRol == 2))
+                                        && u.Contraseña == userContraseña)
                                     .FirstOrDefault();
 
             if (seletedUser != null)
