@@ -16,7 +16,7 @@ namespace WebApplication1.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
-        private readonly ServiceContext _serviceContext; 
+        private readonly ServiceContext _serviceContext;
 
 
 
@@ -35,11 +35,11 @@ namespace WebApplication1.Controllers
         {
             try
             {
-                    var seletedUser = _serviceContext.Set<UserItem>()
-                                   .Where(u => u.NombreUsuario == userNombreUsuario
-                                        && u.Contraseña == userContraseña
-                                        && u.IdRol == 1)
-                                    .FirstOrDefault();
+                var seletedUser = _serviceContext.Set<UserItem>()
+                               .Where(u => u.NombreUsuario == userNombreUsuario
+                                    && u.Contraseña == userContraseña
+                                    && u.IdRol == 1)
+                                .FirstOrDefault();
 
                 if (seletedUser != null)
                 {

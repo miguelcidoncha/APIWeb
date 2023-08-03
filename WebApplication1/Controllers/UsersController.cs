@@ -36,12 +36,11 @@ namespace WebApplication1.Controllers
                                 .FirstOrDefault();
             if ( seletedUser != null)
             {
-                // Журналирование действия
+                // Diario de acción
                 _serviceContext.AuditLogs.Add(new AuditLog
                 {
                     Action = "Insert",
                     TableName = "Users",
-                    //RecordId = userItem.IdRol,
                     Timestamp = DateTime.Now,
                     UserId = seletedUser.IdUsuario
                 });
@@ -102,14 +101,13 @@ namespace WebApplication1.Controllers
 
             if (seletedUser != null)
             {
-                // Журналирование действия
+                // Diario de acción
                 _serviceContext.AuditLogs.Add(new AuditLog
                 {
                     Action = "Delete",
                     TableName = "Users",
-                    //RecordId = userId,
                     Timestamp = DateTime.Now,
-                    UserId = seletedUser.IdUsuario // Добавляем информацию о UserId в AuditLog
+                    UserId = seletedUser.IdUsuario // Añadir información de UserId a AuditLog
                 });
                 var user = _serviceContext.Users.Find(userId);
 

@@ -35,35 +35,35 @@ namespace WebApplication1.Controllers
 
             if (seletedUser != null)
             {
-                if (orderItem != null) 
+                if (orderItem != null)
                 {
-                        // Проверяем, есть ли у заказа уже IdOrder, и если есть, проверяем, что такой заказ не существует в базе данных
-                        if (orderItem.IdOrder != 0)
+                    // Проверяем, есть ли у заказа уже IdOrder, и если есть, проверяем, что такой заказ не существует в базе данных
+                    if (orderItem.IdOrder != 0)
+                    {
+                        var existingOrder = _serviceContext.Orders.FirstOrDefault(o => o.IdOrder == orderItem.IdOrder);
+                        if (existingOrder != null)
                         {
-                            var existingOrder = _serviceContext.Orders.FirstOrDefault(o => o.IdOrder == orderItem.IdOrder);
-                            if (existingOrder != null)
-                            {
-                                return BadRequest("Order with the specified IdOrder already exists.");
-                            }
+                            return BadRequest("Order with the specified IdOrder already exists.");
                         }
+                    }
 
-                        // Добавляем заказ в контекст данных
-                        _serviceContext.Orders.Add(orderItem);
+                    // Добавляем заказ в контекст данных
+                    _serviceContext.Orders.Add(orderItem);
 
-                        // Журналирование действия создания заказа
-                        _serviceContext.AuditLogs.Add(new AuditLog
-                        {
-                            Action = "Insert",
-                            TableName = "Orders",
-                            RecordId = orderItem.IdOrder,
-                            Timestamp = DateTime.Now,
-                            UserId = seletedUser.IdUsuario
-                        });
+                    // Журналирование действия создания заказа
+                    _serviceContext.AuditLogs.Add(new AuditLog
+                    {
+                        Action = "Insert",
+                        TableName = "Orders",
+                        RecordId = orderItem.IdOrder,
+                        Timestamp = DateTime.Now,
+                        UserId = seletedUser.IdUsuario
+                    });
 
-                        // Сохраняем изменения в базе данных
-                        _serviceContext.SaveChanges();
+                    // Сохраняем изменения в базе данных
+                    _serviceContext.SaveChanges();
 
-                        return Ok("El pedido se ha creado correctamente.");
+                    return Ok("El pedido se ha creado correctamente.");
                 }
                 else
                 {

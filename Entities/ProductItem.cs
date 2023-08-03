@@ -21,7 +21,7 @@ namespace Entities
         public double ProductPrice { get; set; }
         public double Discount { get; set; }
 
-        // Навигационное свойство для связи с заказами
+        // Propiedad de navegación para la comunicación de órdenes
         [JsonIgnore]
         public ICollection<OrderItem> Orders { get; set; }
     }

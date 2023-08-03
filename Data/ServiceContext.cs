@@ -18,57 +18,57 @@ namespace Data
         public DbSet<ProductItem> Products { get; set; }
         public DbSet<UserItem> Users { get; set; }
         public DbSet<RollItem> RollUser { get; set; }
-        public DbSet<OrderItem> Orders { get; set; } //Добавляем DbSet для заказов
-        public DbSet<AuditLog> AuditLogs { get; set; } //Добавляем DbSet для логирования
-        public DbSet<OrderStatus> OrderStatuses { get; set; } //Добавляем DbSet состояние заказа
+        public DbSet<OrderItem> Orders { get; set; } //Añadir DbSet para pedidos
+        public DbSet<AuditLog> AuditLogs { get; set; } //Añadir DbSet para el registro
+        public DbSet<OrderStatus> OrderStatuses { get; set; } //Añadir estado del pedido DbSet
 
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<ProductItem>(entity =>         // Конфигурация модели ProductItem
+            builder.Entity<ProductItem>(entity =>         // Configuración del modelo ProductItem
             {
                 entity.ToTable("Products");
                 entity.HasKey(p => p.ProductId);
             });
 
-            builder.Entity<UserItem>(entity =>             // Задаем связь с таблицей "Users" по идентификатору IdUsuario    
+            builder.Entity<UserItem>(entity =>             // Establecer conexión con la tabla "Usuarios" por identificador IdUsuario   
             {
                 entity.ToTable("Users");
                 entity.HasKey(u => u.IdUsuario);
                 entity.HasOne<RollItem>().WithMany().HasForeignKey(u => u.IdRol);
             });
 
-            builder.Entity<RollItem>(entity =>              // Конфигурация модели RollItem
+            builder.Entity<RollItem>(entity =>              // Configuración del modelo RollItem
             {
                 entity.ToTable("RollUser");
                 entity.HasKey(u => u.IdRoll);
             });
             
-            builder.Entity<OrderItem>(entity =>             // Конфигурация модели OrderItem
+            builder.Entity<OrderItem>(entity =>             // Configuración del modelo OrderItem
             {
                 entity.ToTable("Orders");
                 entity.HasKey(o => o.IdOrder);
-                entity.HasOne(o => o.Product)               // Задаем связь с таблицей "Products" по идентификатору продукта
+                entity.HasOne(o => o.Product)               // Establecer la conexión con la tabla "Productos" por ID de producto
                       .WithMany(p => p.Orders)
                       .HasForeignKey(o => o.ProductId);
-                entity.HasOne(o => o.OrderStatus)           // Задаем связь с таблицей OrderStatus по идентификатору состояния заказа
+                entity.HasOne(o => o.OrderStatus)           // Definir conexión con la tabla OrderStatus por identificador de estado del pedido
                     .WithMany()
                     .HasForeignKey(o => o.OrderStatusId)
-                    .OnDelete(DeleteBehavior.NoAction); // Задаем правило удаления NO ACTION
+                    .OnDelete(DeleteBehavior.NoAction); // Establecimiento de la regla de supresión NO ACTION
             });
 
-            builder.Entity<AuditLog>(entity =>              // Конфигурация модели AuditLog
+            builder.Entity<AuditLog>(entity =>              // Configuración del modelo AuditLog
             {
                 entity.ToTable("AuditLog");
                 entity.HasKey(a => a.IdLog);
-                // Устанавливаем внешний ключ для связи с таблицей Users
+                // Establecer la clave externa para la comunicación con la tabla Usuarios
                 entity.HasOne(a => a.User)
                       .WithMany(u => u.AuditLogs)
                       .HasForeignKey(a => a.UserId)
                       .OnDelete(DeleteBehavior.Restrict);
             });
             
-            builder.Entity<OrderStatus>(entity =>           // Конфигурация модели OrderStatus
+            builder.Entity<OrderStatus>(entity =>           // Configuración del modelo OrderStatus
             {
                 entity.ToTable("OrderStatuses");
                 entity.HasKey(os => os.OrderStatusId);
@@ -77,7 +77,7 @@ namespace Data
         }
 
 
-        // Метод для удаления записи из таблицы "Products" по productId
+        // Método para eliminar un registro de la tabla "Productos" por productId
         public bool RemoveProductById(int productId)
         {
             var productToRemove = Products.FirstOrDefault(p => p.ProductId == productId);
@@ -86,13 +86,13 @@ namespace Data
             {
                 Products.Remove(productToRemove);
                 SaveChanges();
-                return true; // Успешное удаление
+                return true; // Eliminación con éxito
             }
 
-            return false; // Запись с указанным идентификатором не найдена
+            return false; // No se ha encontrado ningún registro con el identificador especificado
         }
 
-        // Метод для удаления записи из таблицы "Orders" по идентификатору
+        // Método para eliminar un registro de la tabla "Pedidos" por identificador
         public bool RemoveOrderById(int orderId)
         {
             var orderToRemove = Orders.FirstOrDefault(o => o.IdOrder == orderId);
@@ -101,47 +101,47 @@ namespace Data
             {
                 Orders.Remove(orderToRemove);
                 SaveChanges();
-                return true;// Успешное удаление
+                return true;// Eliminación con éxito
             }
-            return false;// Запись с указанным идентификатором не найдена
+            return false;//No se ha encontrado ningún registro con el identificador especificado
         }
 
-        // В классе ServiceContext или другом классе, отвечающем за доступ к базе данных
+        // En la clase ServiceContext u otra clase responsable de acceder a la base de datos
 
         public bool RemoveUserById(int userId)
         {
-            // Находим запись пользователя, которую хотим удалить, по ее идентификатору
+            // Busque el registro de usuario que desea eliminar por su identificador
             var userToRemove = Users.FirstOrDefault(u => u.IdUsuario == userId);
 
-            // Проверяем, была ли найдена запись
+            // Comprobar si se ha encontrado el registro
             if (userToRemove != null)
             {
-                // Удаляем запись из контекста
+                // Eliminar una entrada del contexto
                 Users.Remove(userToRemove);
 
-                // Сохраняем изменения в базе данных
+                // Guardar los cambios en la base de datos
                 SaveChanges();
-                return true; // Успешное удаление
+                return true; // Eliminación con éxito
             }
 
-            return false; // Запись с указанным идентификатором не найдена
+            return false; // No se ha encontrado ningún registro con el identificador especificado
         }
 
-        // Метод для сохранения заказа
+        // Método para guardar el pedido
         public void SaveOrder(OrderItem orderItem)
         {
-            // Проверяем, существует ли указанный OrderStatusId в таблице OrderStatuses
+            // Comprueba si el OrderStatusId especificado existe en la tabla OrderStatuses
             bool orderStatusExists = OrderStatuses.Any(os => os.OrderStatusId == orderItem.OrderStatusId);
 
             if (orderStatusExists)
             {
-                // Получаем объект OrderStatus по его OrderStatusId
+                // Obtener el objeto OrderStatus por su OrderStatusId
                 var orderStatus = OrderStatuses.Find(orderItem.OrderStatusId);
 
-                // Присваиваем объект OrderStatus объекту OrderItem
+                // Asignar el objeto OrderStatus al objeto OrderItem
                 orderItem.OrderStatus = orderStatus;
 
-                // Сохраняем объект OrderItem
+                // Guardar el objeto OrderItem
                 Orders.Add(orderItem);
                 SaveChanges();
             }
