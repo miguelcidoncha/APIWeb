@@ -1,5 +1,5 @@
 ﻿using Data;
-using Entities;
+using Entities.Entities;
 using WebApplication1.IServices;
 
 namespace WebApplication1.Services

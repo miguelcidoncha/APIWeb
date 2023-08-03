@@ -6,11 +6,11 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace Entities
+namespace Entities.Entities
 {
     public class ProductItem
     {
-        public ushort ProductId { get; set; }
+        public int ProductId { get; set; }
         public string ProductName { get; set; }
         public string BrandName { get; set; }
         public string ProductModel { get; set; }
@@ -24,7 +24,7 @@ namespace Entities
 
         // Навигационное свойство для связи с заказами
         [JsonIgnore]
-        public ICollection<OrderItem> Orders { get; set; }
+        public ICollection<OrderProduct> OrderProduct { get; set; }
 
         // Навигационное свойство для связи с изображениями
         [JsonIgnore]
@@ -32,8 +32,9 @@ namespace Entities
 
         public ProductItem()
         {
-            // Инициализация коллекции ImageItems
+            // Инициализация коллекции
             ImageItem = new List<ImageItem>();
+            OrderProduct = new List<OrderProduct>();
         }
     }
 

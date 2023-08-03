@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Entities
+namespace Entities.Entities
 {
     public class ImageItem
     {
-        public ushort IdImage { get; set; }
+        public int IdImage { get; set; }
         public byte[] ImageData { get; set; } // BLOB
 
         [ForeignKey("ProductId")]
-        public ushort ProductId { get; set; }
+        public int ProductId { get; set; }
         public ProductItem Product { get; set; }
     }
 }

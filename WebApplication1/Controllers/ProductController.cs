@@ -1,5 +1,4 @@
 ﻿using Data;
-using Entities;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Authentication;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +7,7 @@ using WebApplication1.IServices;
 using WebApplication1.Services;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
+using Entities.Entities;
 
 namespace WebApplication1.Controllers
 {
@@ -26,25 +26,74 @@ namespace WebApplication1.Controllers
             _serviceContext = serviceContext;
         }
 
-        //Añadir un product
-        [HttpPost(Name = "InsertProduct")]
+        //Pedir un producto de la tabla Products por su Id
+        //[HttpGet("{productId}", Name = "GetProduct")]
+        //public IActionResult Get(int productId)
+        //{
+        //    try
+        //    {
+        //        var product = _serviceContext.Products.Include(p => p.Orders).FirstOrDefault(p => p.ProductId == productId);
+        //        if (product != null)
+        //        {
+        //            return Ok(product);
+        //        }
+        //        else
+        //        {
+        //            return NotFound("No se ha encontrado el producto con el identificador especificado.");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, "Error al obtener el producto: " + ex.Message);
+        //    }
+        //}
 
-        //Unidad de verificación de los derechos de acceso
-        //возвращаю Ok(productId), где productId - это IActionResult для метода с атрибутом HttpPost.
-        public IActionResult Post([FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] ProductItem productItem)
+
+        [HttpGet("GetProductsInOrder/{orderId}", Name = "GetProductsInOrder")]
+        public IActionResult GetProductsInOrder(int orderId)
         {
             try
             {
-                    var seletedUser = _serviceContext.Set<UserItem>()
-                                   .Where(u => u.NombreUsuario == userNombreUsuario
-                                        && u.Contraseña == userContraseña
-                                        && u.IdRol == 1)
-                                    .FirstOrDefault();
+                var order = _serviceContext.Orders
+                    .Include(o => o.OrderProduct)
+                        .ThenInclude(op => op.Product)
+                    .FirstOrDefault(o => o.IdOrder == orderId);
 
-                if (seletedUser != null)
+                if (order != null)
+                {
+                    var productsInOrder = order.OrderProduct.Select(op => op.Product).ToList();
+                    return Ok(productsInOrder);
+                }
+                else
+                {
+                    return NotFound("No se ha encontrado el pedido con el identificador especificado.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error al obtener los productos del pedido: " + ex.Message);
+            }
+        }
+
+
+        //Поиск по полю BrandName
+        // Добавление продукта
+        [HttpPost(Name = "InsertProduct")]
+        public IActionResult InsertProduct([FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] ProductItem productItem)
+        {
+            try
+            {
+                var selectedUser = _serviceContext.Set<UserItem>()
+                    .Where(u => u.NombreUsuario == userNombreUsuario
+                        && u.Contraseña == userContraseña
+                        && u.IdRol == 1)
+                    .FirstOrDefault();
+
+                if (selectedUser != null)
                 {
                     // Выполняем добавление продукта
                     int productId = _productService.InsertProduct(productItem);
+
                     // Журналирование действия добавления продукта
                     _serviceContext.AuditLogs.Add(new AuditLog
                     {
@@ -52,15 +101,16 @@ namespace WebApplication1.Controllers
                         TableName = "Products",
                         RecordId = productId,
                         Timestamp = DateTime.Now,
-                        UserId = seletedUser.IdUsuario
+                        UserId = selectedUser.IdUsuario
                     });
-                    _serviceContext.SaveChanges(); // Сохраняем изменения в базу данных
 
-                    return Ok(productId); // // Возвращаем статус 200 OK с данными productId
+                    // Сохраняем изменения в базе данных
+                    _serviceContext.SaveChanges();
+
+                    return Ok(productId); // Возвращаем статус 200 OK с данными productId
                 }
                 else
                 {
-                    //throw new InvalidCredentialException("El ususario no esta autorizado o no existe");
                     return BadRequest("Usuario no autorizado o no encontrado"); // Возвращаем сообщение об ошибке
                 }
             }
@@ -69,30 +119,6 @@ namespace WebApplication1.Controllers
                 return StatusCode(500, "Error al añadir el producto: " + ex.Message);
             }
         }
-
-        //Pedir un producto de la tabla Products por su Id
-        [HttpGet("{productId}", Name = "GetProduct")]
-        public IActionResult Get(int productId)
-        {
-            try
-            {
-                var product = _serviceContext.Products.Include(p => p.Orders).FirstOrDefault(p => p.ProductId == productId);
-                if (product != null)
-                {
-                    return Ok(product);
-                }
-                else
-                {
-                    return NotFound("No se ha encontrado el producto con el identificador especificado.");
-                }
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Error al obtener el producto: " + ex.Message);
-            }
-        }
-
-        //Поиск по полю BrandName
         [HttpGet("SearchByBrand", Name = "SearchProductByBrand")]
         public IActionResult SearchByBrand([FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromQuery] string brandName)
         {
@@ -128,8 +154,59 @@ namespace WebApplication1.Controllers
         }
 
 
+        [HttpGet("{id}", Name = "Insert-Product-Image")]
+        public IActionResult GetImage(ushort id)
+        {
+            var image = _serviceContext.Images.FirstOrDefault(i => i.IdImage == id);
+            if (image != null)
+            {
+                return File(image.ImageData, "image/jpeg"); // Возвращаем файл изображения
+            }
+            else
+            {
+                return NotFound("Imagen no encontrada");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult UploadImage([FromForm] IFormFile file, [FromForm] ushort productId)
+        //public IActionResult UploadImage([FromBody] IFormFile file, [FromForm] ushort productId)
+        {
+            try
+            {
+                if (file == null || file.Length == 0)
+                {
+                    return BadRequest("Error al cargar el archivo");
+                }
+
+                // Читаем данные файла в массив байтов
+                using (var memoryStream = new MemoryStream())
+                {
+                    file.CopyTo(memoryStream);
+                    var imageData = memoryStream.ToArray();
+
+                    // Создаем новую сущность ImageItem
+                    var image = new ImageItem
+                    {
+                        ImageData = imageData,
+                        ProductId = productId
+                    };
+
+                    // Добавляем изображение в таблицу Images
+                    _serviceContext.Images.Add(image);
+                    _serviceContext.SaveChanges();
+
+                    return Ok("La imagen se ha cargado y guardado correctamente");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error al cargar una imagen: " + ex.Message);
+            }
+        }
+
+
         // modificar registros de la tabla "Products"
-        // модифицировать записи в таблице "Products"
         [HttpPut("{productId}", Name = "UpdateProduct")]
         public IActionResult UpdateProduct(ushort productId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] ProductItem updatedProduct)
         {

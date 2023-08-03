@@ -1,4 +1,4 @@
-﻿using Entities;
+﻿using Entities.Entities;
 
 namespace WebApplication1.IServices
 {
