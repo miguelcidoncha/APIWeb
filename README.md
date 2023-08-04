@@ -1,13 +1,13 @@
 <h1 align=center>API WEB</h1>
 
-## Project Description
+## Project Description 📎
 
 This project aimed to create a database and a REST API. Its goal is to develop a comprehensive management system that facilitates interaction between suppliers and users/customers. Suppliers will be able to query, add, modify, and delete product records in their catalog, as well as manage customer data to whom they provide services. Additionally, they can check product stock and filter products by brands. Brand management will also be available. On the other hand, customers will have the ability to place and view their orders through the Swagger interface. Suppliers, in turn, will be able to access placed orders and update their status to mark them as delivered and paid. The system will enable a smooth and efficient interaction between suppliers and customers, enhancing service quality and optimizing inventory and order management processes.
 
-## Screenshots
+## Screenshots 📷
 
 
-## 💻Stack
+## Stacks 🖥️
 ● Microsoft Visual Studio 2022 <br>
 ● SQL Server <br>
 ● C# <br>
@@ -16,7 +16,7 @@ This project aimed to create a database and a REST API. Its goal is to develop a
 ● Slack <br>
 ● Zoom
 
-## 🔨Technologies and Tools
+## Technologies and Tools 🔨
 <div>  
 <a href="https://github.com/" target="_blank"><img style="margin: 10px" src="https://profilinator.rishav.dev/skills-assets/git-scm-icon.svg" alt="Git" height="50" /></a>  
 <a href="https://docs.microsoft.com/en-us/dotnet/csharp/" target="_blank"><img style="margin: 10px" src="https://profilinator.rishav.dev/skills-assets/csharp-original.svg" alt="C#" height="50" /></a>  
@@ -24,7 +24,7 @@ This project aimed to create a database and a REST API. Its goal is to develop a
 <a href="https://dotnet.microsoft.com/download" target="_blank"><img style="margin: 10px" src="https://profilinator.rishav.dev/skills-assets/dotnetcore.png" alt=".Net Core" height="50" /></a>  
 </div>
 
-## Installation Process
+## Installation Process ⬆️
 
 1. Clone the GitHub repository: https://github.com/miguelcidoncha/APIWeb
 2. Open the file using Microsoft Visual Studio 2022.
@@ -34,7 +34,7 @@ This project aimed to create a database and a REST API. Its goal is to develop a
 6. Create, modify, and delete content in Swagger.
 7. View the stored data in the SQL Server tables.
 
-## File Structure
+## File Structure 📁
 1. API or Database:
 An API is a set of rules and protocols that allows different software applications to communicate and interact with each other. It enables developers to access certain features or data from a remote service or application. On the other hand, a database is an organized system for storing and managing data in a structured way, facilitating data retrieval and modification.
 
@@ -66,10 +66,10 @@ appsettings.json is a configuration file in which various settings for the appli
 6. Program: The place of connection between the API and Swagger.
 The "Program" refers to the entry point of the application. In the context of an API, this is where the application is configured and started. Swagger is a tool that provides documentation and testing capabilities for APIs. In the "Program" file, the API may be configured to integrate with Swagger, allowing developers and users to easily explore and interact with the API's endpoints.
 
-## Next Steps
+## Next Steps 🔜
 For the future, we would like to be able to add images to visually complement the products added. It would also be interesting to differentiate between types of customers/users, whether they are individuals or businesses/companies. Allowing users to create a profile to access various promotions or discounts would be beneficial as well. Similarly, we aim to configure the SQL Server to send purchase confirmations to users via email. Lastly, we plan to work on the front-end to create a web page that replaces the Swagger interface and link it with the database.
 
-## Authors
+## Authors 👨‍💻👩‍💻
 
 | [<img src="https://avatars.githubusercontent.com/u/132567624?v=4" width=100><br><sub>Francisco Manuel Nieto</sub>](https://github.com/franciscomanuelnietogarcia) | [<img src="https://avatars.githubusercontent.com/u/133955831?v=4" width=100><br><sub>Isabel Lozano</sub>](https://github.com/isabellozano37) | [<img src="https://avatars.githubusercontent.com/u/132560447?v=4" width=100><br><sub>Viacheslav Fitlin</sub>](https://github.com/Slavafit) | [<img src="https://avatars.githubusercontent.com/u/132567398?v=4" width=100><br><sub>Miguel Cidoncha</sub>](https://github.com/miguelcidoncha) |
 | :---: | :---: | :---: | :---: |
