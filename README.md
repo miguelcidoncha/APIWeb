@@ -26,6 +26,8 @@ En este proyecto se planteó crear una bases de datos y una API Rest. El objetiv
 
 ## Proceso de instalación
 
+## Estructura de archivos
+
 ## Next Steps
 
 ## Autores
