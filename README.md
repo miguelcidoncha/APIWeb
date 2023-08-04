@@ -21,7 +21,4 @@ En este proyecto se planteó crear una bases de datos y una API Rest. El objetiv
 <h2>Next Steps</h2>
 
 <h2>Autores</h2>
-● Francisco Manuel Nieto. Scrum Máster
-● [<img src="https://avatars.githubusercontent.com/u/109661844?v=4" width=150><br><sub>Isabel Lozano</sub>](https://github.com/isabellozano37))Isabel Lozano. Product Owner.
-● Viacheslav Fitlin. Developer.
-● Miguel Cidoncha. Developer. 
+● |Isabel Lozano  | [isabellozano37](https://github.com/isabellozano37) | ![Foto de Isabel](https://avatars.githubusercontent.com/u/133955831?v=4) |
