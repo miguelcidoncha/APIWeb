@@ -16,14 +16,6 @@ namespace WebApplication1.Services
             _serviceContext.SaveChanges();
             return productItem.ProductId;
         }
-        public List<ProductItem> GetProductsInOrder(int orderId)
-        {
-            var productsInOrder = _serviceContext.OrderProduct
-                .Where(op => op.OrderId == orderId)
-                .Select(op => op.Product)
-                .ToList();
 
-            return productsInOrder;
-        }
 }
 }

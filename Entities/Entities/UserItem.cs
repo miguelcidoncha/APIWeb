@@ -10,7 +10,7 @@ namespace Entities.Entities
 {
     public class UserItem
     {
-        public int IdUsuario { get; set; }
+        public int UsuarioId { get; set; }
 
         [Required]
         public string NombreUsuario { get; set; }
@@ -23,9 +23,6 @@ namespace Entities.Entities
 
         [Required]
         public string Email { get; set; }
-
-        [JsonIgnore]
-        public List<AuditLog> AuditLogs { get; set; }
 
     }
 }

@@ -14,18 +14,7 @@ namespace WebApplication1.Services
         {
             _serviceContext.Orders.Add(orderItem);
             _serviceContext.SaveChanges();
-            return orderItem.IdOrder;
-        }
-
-        public int InsertOrderProduct(OrderProduct orderProduct)
-        {
-            _serviceContext.OrderProduct.Add(orderProduct);
-            _serviceContext.SaveChanges();
-            return orderProduct.Id;
-        }
-        public OrderItem GetOrderById(int orderId)
-        {
-            return _serviceContext.Orders.FirstOrDefault(o => o.IdOrder == orderId);
+            return orderItem.OrderId;
         }
     }
 }

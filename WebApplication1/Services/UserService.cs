@@ -10,11 +10,11 @@ namespace WebApplication1.Services
         {
         }
 
-        public int InsertUsers(UserItem userItem)
+        public int InsertUser(UserItem userItem)
         {
             _serviceContext.Users.Add(userItem);
             _serviceContext.SaveChanges();
-            return userItem.IdUsuario;
+            return userItem.UsuarioId;
         }
     }
 }

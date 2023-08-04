@@ -1,21 +1,23 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Entities.Entities;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 namespace Entities.Entities
 {
     public class OrderProduct
-
     {
         public int Id { get; set; }
-        public int IdUsuario { get; set; }
-        public UserItem? UserItem { get; set; }
-
-        [ForeignKey("OrderId")]
+        public int UsuarioId { get; set;}
         public int OrderId { get; set; }
-        public OrderItem? Order { get; set; }
-
-        [ForeignKey("ProductId")]
         public int ProductId { get; set; }
-        public ProductItem? Product { get; set; }
+        public virtual OrderItem OrderItem { get; set; }
+        public virtual ProductItem ProductItem { get; set; }
+        public virtual UserItem UserItem { get; set; }
     }
+
 }
