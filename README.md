@@ -1,6 +1,6 @@
 <h1 align=center>API WEB</h1>
 
-## Project Description 📎
+## Project Description 🚀
 
 This project aimed to create a database and a REST API. Its goal is to develop a comprehensive management system that facilitates interaction between suppliers and users/customers. Suppliers will be able to query, add, modify, and delete product records in their catalog, as well as manage customer data to whom they provide services. Additionally, they can check product stock and filter products by brands. Brand management will also be available. On the other hand, customers will have the ability to place and view their orders through the Swagger interface. Suppliers, in turn, will be able to access placed orders and update their status to mark them as delivered and paid. The system will enable a smooth and efficient interaction between suppliers and customers, enhancing service quality and optimizing inventory and order management processes.
 
