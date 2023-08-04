@@ -98,7 +98,7 @@ namespace WebApplication1.Controllers
 
 
                     // В этот момент у заказа будет присвоен уникальный OrderId, сгенерированный базой данных
-                    _serviceContext.SaveChanges();
+                    //_serviceContext.SaveChanges();
 
                     // Добавляем продукты в заказ//Añadir productos al pedido
 
@@ -108,7 +108,7 @@ namespace WebApplication1.Controllers
                         var orderProduct = new OrderProduct
                         {
                             IdUsuario = selectedUser.IdUsuario,
-                            OrderId = orderItem.IdOrder,
+                            OrderId = orderItem.OrderId,
                             ProductId = orderItem.ProductId
                         };
 
@@ -131,7 +131,7 @@ namespace WebApplication1.Controllers
         [HttpGet("Order/Get", Name = "GetOrder")]
         public IActionResult Get(ushort orderId)
         {
-            var order = _serviceContext.Orders.FirstOrDefault(p => p.IdOrder == orderId);
+            var order = _serviceContext.Orders.FirstOrDefault(p => p.OrderId == orderId);
             if (order != null)
             {
                 return Ok(order);
@@ -170,42 +170,42 @@ namespace WebApplication1.Controllers
         //}
 
 
-        [HttpGet("{userId}/{orderId}", Name = "GetOrderWithProducts")]
-        public IActionResult GetOrderWithProducts(int userId, int orderId)
-        {
-            try
-            {
-                // Проверяем, существует ли пользователь с указанным идентификатором
-                var user = _serviceContext.Users.FirstOrDefault(u => u.IdUsuario == userId);
-                if (user == null)
-                {
-                    return NotFound("Usuario no encontrado.");
-                }
+        //[HttpGet("{userId}/{orderId}", Name = "GetOrderWithProducts")]
+        //public IActionResult GetOrderWithProducts(int userId, int orderId)
+        //{
+        //    try
+        //    {
+        //        // Проверяем, существует ли пользователь с указанным идентификатором
+        //        var user = _serviceContext.Users.FirstOrDefault(u => u.IdUsuario == userId);
+        //        if (user == null)
+        //        {
+        //            return NotFound("Usuario no encontrado.");
+        //        }
 
-                // Получаем информацию о заказе по его идентификатору
-                var order = _orderService.GetOrderById(orderId);
-                if (order == null)
-                {
-                    return NotFound("Pedido no encontrado.");
-                }
+        //        // Получаем информацию о заказе по его идентификатору
+        //        var order = _orderService.GetOrderById(orderId);
+        //        if (order == null)
+        //        {
+        //            return NotFound("Pedido no encontrado.");
+        //        }
 
-                // Получаем список продуктов в заказе по его идентификатору
-                var productsInOrder = _productService.GetProductsInOrder(orderId);
+        //        // Получаем список продуктов в заказе по его идентификатору
+        //        var productsInOrder = _productService.GetProductsInOrder(orderId);
 
-                // Создаем объект, который содержит информацию о заказе и список продуктов в нем
-                var orderWithProducts = new
-                {
-                    Order = order,
-                    Products = productsInOrder
-                };
+        //        // Создаем объект, который содержит информацию о заказе и список продуктов в нем
+        //        var orderWithProducts = new
+        //        {
+        //            Order = order,
+        //            Products = productsInOrder
+        //        };
 
-                return Ok(orderWithProducts);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Error al obtener el pedido: " + ex.Message);
-            }
-        }
+        //        return Ok(orderWithProducts);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, "Error al obtener el pedido: " + ex.Message);
+        //    }
+        //}
 
 
         // Modificar registros de la tabla Orders
@@ -219,7 +219,7 @@ namespace WebApplication1.Controllers
 
             if (seletedUser != null)
             {
-                var order = _serviceContext.Orders.FirstOrDefault(o => o.IdOrder == orderId);
+                var order = _serviceContext.Orders.FirstOrDefault(o => o.OrderId == orderId);
 
                 if (order != null)
                 {

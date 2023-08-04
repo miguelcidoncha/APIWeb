@@ -5,11 +5,10 @@ namespace Entities.Entities
 {
     public class OrderItem
     {
-        public int IdOrder { get; set; }
+        public int OrderId { get; set; }
         public string CustomerName { get; set; }
         public int ProductId { get; set; }
         public int ProductStock { get; set; }
-        public double TotalPrice { get; set; }
         public DateTime DateOrder { get; set; }
         public int OrderStatusId { get; set; }
 

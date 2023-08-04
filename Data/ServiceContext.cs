@@ -64,7 +64,7 @@ namespace Data
             builder.Entity<OrderItem>(entity =>             // Конфигурация модели OrderItem
             {
                 entity.ToTable("Orders");
-                entity.HasKey(o => o.IdOrder);
+                entity.HasKey(o => o.OrderId);
 
                 entity.HasMany(o => o.OrderProduct)
                       .WithOne(op => op.Order)
@@ -138,7 +138,7 @@ namespace Data
         // Метод для удаления записи из таблицы "Orders" по идентификатору
         public bool RemoveOrderById(int orderId)
         {
-            var orderToRemove = Orders.FirstOrDefault(o => o.IdOrder == orderId);
+            var orderToRemove = Orders.FirstOrDefault(o => o.OrderId == orderId);
 
             if (orderToRemove != null)
             {

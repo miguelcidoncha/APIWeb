@@ -14,7 +14,7 @@ namespace WebApplication1.Services
         {
             _serviceContext.Orders.Add(orderItem);
             _serviceContext.SaveChanges();
-            return orderItem.IdOrder;
+            return orderItem.OrderId;
         }
 
         public int InsertOrderProduct(OrderProduct orderProduct)
@@ -25,7 +25,7 @@ namespace WebApplication1.Services
         }
         public OrderItem GetOrderById(int orderId)
         {
-            return _serviceContext.Orders.FirstOrDefault(o => o.IdOrder == orderId);
+            return _serviceContext.Orders.FirstOrDefault(o => o.OrderId == orderId);
         }
     }
 }

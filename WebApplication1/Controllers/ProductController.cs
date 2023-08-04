@@ -49,31 +49,31 @@ namespace WebApplication1.Controllers
         //}
 
 
-        [HttpGet("GetProductsInOrder/{orderId}", Name = "GetProductsInOrder")]
-        public IActionResult GetProductsInOrder(int orderId)
-        {
-            try
-            {
-                var order = _serviceContext.Orders
-                    .Include(o => o.OrderProduct)
-                        .ThenInclude(op => op.Product)
-                    .FirstOrDefault(o => o.IdOrder == orderId);
+        //[HttpGet("GetProductsInOrder/{orderId}", Name = "GetProductsInOrder")]
+        //public IActionResult GetProductsInOrder(int orderId)
+        //{
+        //    try
+        //    {
+        //        var order = _serviceContext.Orders
+        //            .Include(o => o.OrderProduct)
+        //                .ThenInclude(op => op.Product)
+        //            .FirstOrDefault(o => o.OrderId == orderId);
 
-                if (order != null)
-                {
-                    var productsInOrder = order.OrderProduct.Select(op => op.Product).ToList();
-                    return Ok(productsInOrder);
-                }
-                else
-                {
-                    return NotFound("No se ha encontrado el pedido con el identificador especificado.");
-                }
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Error al obtener los productos del pedido: " + ex.Message);
-            }
-        }
+        //        if (order != null)
+        //        {
+        //            var productsInOrder = order.OrderProduct.Select(op => op.Product).ToList();
+        //            return Ok(productsInOrder);
+        //        }
+        //        else
+        //        {
+        //            return NotFound("No se ha encontrado el pedido con el identificador especificado.");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, "Error al obtener los productos del pedido: " + ex.Message);
+        //    }
+        //}
 
 
         //Поиск по полю BrandName

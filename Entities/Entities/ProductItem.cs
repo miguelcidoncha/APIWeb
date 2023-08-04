@@ -20,7 +20,6 @@ namespace Entities.Entities
         public string ProductColor { get; set; }
         public int ProductStock { get; set; }
         public double ProductPrice { get; set; }
-        public double Discount { get; set; }
 
         // Навигационное свойство для связи с заказами
         [JsonIgnore]
