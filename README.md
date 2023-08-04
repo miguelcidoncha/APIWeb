@@ -20,5 +20,5 @@ En este proyecto se planteó crear una bases de datos y una API Rest. El objetiv
 
 <h2>Next Steps</h2>
 
-<h2>Autores</h2>
-● |Isabel Lozano  | [isabellozano37](https://github.com/isabellozano37) | ![Foto de Isabel](https://avatars.githubusercontent.com/u/133955831?v=4) |
+## Autores
+● | Isabel Lozano  | [isabellozano37](https://github.com/isabellozano37) | ![Foto de Isabel](https://avatars.githubusercontent.com/u/133955831?v=4) |
