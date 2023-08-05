@@ -24,6 +24,9 @@ namespace Entities.Entities
         [Required]
         public string? Email { get; set; }
 
+        public float? Discont { get; set; }
+
+
         [JsonIgnore]
         public virtual ICollection<OrderItem>? Order { get; set; }      //один пользователь может иметь много заказов.
 
