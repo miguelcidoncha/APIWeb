@@ -32,7 +32,7 @@ namespace WebApplication1.Controllers
             var seletedUser = _serviceContext.Set<UserItem>()
                                .Where(u => u.NombreUsuario == userNombreUsuario
                                     && u.Contraseña == userContraseña
-                                    && u.IdRol == 1)
+                                    && u.RolId == 1)
                                 .FirstOrDefault();
             if ( seletedUser != null)
             {
@@ -46,44 +46,74 @@ namespace WebApplication1.Controllers
         }
 
 
-        //[HttpPut(Name = "UpdateUser")]
-        //public IActionResult UpdateUser(int userId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] UserItem updatedUser)
-        //{
-        //    var seletedUser = _serviceContext.Set<UserItem>()
-        //                           .Where(u => u.NombreUsuario == userNombreUsuario
-        //                                && u.Contraseña == userContraseña
-        //                                && u.IdRol == 1)
-        //                            .FirstOrDefault();
+        [HttpPut(Name = "UpdateUser")]
+        public IActionResult UpdateUser(int userId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] UserItem updatedUser)
+        {
+            var seletedUser = _serviceContext.Set<UserItem>()
+                                   .Where(u => u.NombreUsuario == userNombreUsuario
+                                        && u.Contraseña == userContraseña
+                                        && u.RolId == 1)
+                                    .FirstOrDefault();
 
-        //    if (seletedUser != null)
-        //    {
-        //        var user = _serviceContext.Users.FirstOrDefault(p => p.Usuario == userId);
+            if (seletedUser != null)
+            {
+                var user = _serviceContext.Users.FirstOrDefault(p => p.UsuarioId == userId);
 
-        //        if (user != null)
-        //        {
-        //            user.NombreUsuario = updatedUser.NombreUsuario;
-        //            user.IdRol = updatedUser.IdRol;
-        //            user.Contraseña = updatedUser.Contraseña;
-        //            user.Email = updatedUser.Email;
+                if (user != null)
+                {
+                    user.NombreUsuario = updatedUser.NombreUsuario;
+                    user.RolId = updatedUser.RolId;
+                    user.Contraseña = updatedUser.Contraseña;
+                    user.Email = updatedUser.Email;
 
-        //            _serviceContext.SaveChanges();
+                    _serviceContext.SaveChanges();
 
-        //            return Ok("El ususario se ha actualizado correctamente.");
-        //        }
-        //        else
-        //        {
-        //            return NotFound("No se ha encontrado el usuario con el identificador especificado.");
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return Unauthorized("El usuario no está autorizado o no existe");
-        //    }
-        //}
+                    return Ok("El ususario se ha actualizado correctamente.");
+                }
+                else
+                {
+                    return NotFound("No se ha encontrado el usuario con el identificador especificado.");
+                }
+            }
+            else
+            {
+                return Unauthorized("El usuario no está autorizado o no existe");
+            }
+        }
 
 
 
-       
+        [HttpDelete("{userId}", Name = "DeleteUser")]
+        public IActionResult DeleteUser(int userId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
+        {
+            var seletedUser = _serviceContext.Set<UserItem>()
+                                   .Where(u => u.NombreUsuario == userNombreUsuario
+                                        && u.Contraseña == userContraseña
+                                        && u.RolId == 1)
+                                    .FirstOrDefault();
+
+            if (seletedUser != null)
+            {
+                var user = _serviceContext.Users.FirstOrDefault(p => p.UsuarioId == userId);
+
+                if (user != null)
+                {
+                    _serviceContext.Users.Remove(user); // Удаляем пользователя
+                    _serviceContext.SaveChanges(); // Сохраняем изменения в базе данных
+
+                    return Ok("El ususario se ha eliminado correctamente.");
+                }
+                else
+                {
+                    return NotFound("No se ha encontrado el usuario con el identificador especificado.");
+                }
+            }
+            else
+            {
+                return Unauthorized("El usuario no está autorizado o no existe");
+            }
+        }
+
 
     }
 }

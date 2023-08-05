@@ -28,38 +28,38 @@ namespace WebApplication1.Controllers
 
 
         // Добавление продукта
-        //[HttpPost(Name = "InsertProduct")]
-        //public IActionResult InsertProduct([FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] ProductItem productItem)
-        //{
-        //    try
-        //    {
-        //        var selectedUser = _serviceContext.Set<UserItem>()
-        //            .Where(u => u.NombreUsuario == userNombreUsuario
-        //                && u.Contraseña == userContraseña
-        //                && u.IdRol == 1)
-        //            .FirstOrDefault();
+        [HttpPost(Name = "InsertProduct")]
+        public IActionResult InsertProduct([FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] ProductItem productItem)
+        {
+            try
+            {
+                var selectedUser = _serviceContext.Set<UserItem>()
+                    .Where(u => u.NombreUsuario == userNombreUsuario
+                        && u.Contraseña == userContraseña
+                        && u.RolId == 1)
+                    .FirstOrDefault();
 
-        //        if (selectedUser != null)
-        //        {
-        //            // Выполняем добавление продукта
-        //            int productId = _productService.InsertProduct(productItem);
+                if (selectedUser != null)
+                {
+                    // Выполняем добавление продукта
+                    int productId = _productService.InsertProduct(productItem);
 
 
-        //            // Сохраняем изменения в базе данных
-        //            _serviceContext.SaveChanges();
+                    // Сохраняем изменения в базе данных
+                    _serviceContext.SaveChanges();
 
-        //            return Ok(productId); // Возвращаем статус 200 OK с данными productId
-        //        }
-        //        else
-        //        {
-        //            return BadRequest("Usuario no autorizado o no encontrado"); // Возвращаем сообщение об ошибке
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, "Error al añadir el producto: " + ex.Message);
-        //    }
-        //}
+                    return Ok(productId); // Возвращаем статус 200 OK с данными productId
+                }
+                else
+                {
+                    return BadRequest("Usuario no autorizado o no encontrado"); // Возвращаем сообщение об ошибке
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error al añadir el producto: " + ex.Message);
+            }
+        }
 
 
 
@@ -133,32 +133,32 @@ namespace WebApplication1.Controllers
         //            return NotFound("No se ha encontrado el producto con el identificador especificado.");
         //        }
 
-                //// Журналирование действия удаления продукта
-                //_serviceContext.AuditLogs.Add(new AuditLog
-                //{
-                //    Action = "Delete",
-                //    TableName = "Products",
-                //    RecordId = productId,
-                //    Timestamp = DateTime.Now,
-                //    UserId = seletedUser.IdUsuario // Добавляем информацию о UserId в AuditLog
-                //});
+        //// Журналирование действия удаления продукта
+        //_serviceContext.AuditLogs.Add(new AuditLog
+        //{
+        //    Action = "Delete",
+        //    TableName = "Products",
+        //    RecordId = productId,
+        //    Timestamp = DateTime.Now,
+        //    UserId = seletedUser.IdUsuario // Добавляем информацию о UserId в AuditLog
+        //});
 
-                // Вызываем метод для удаления продукта по идентификатору
-                //bool isDeleted = _serviceContext.RemoveProductById(productId);
+        // Вызываем метод для удаления продукта по идентификатору
+        //bool isDeleted = _serviceContext.RemoveProductById(productId);
 
-            //    if (isDeleted)
-            //    {
-            //        return Ok("El producto se ha eliminado correctamente.");
-            //    }
-            //    else
-            //    {
-            //        return BadRequest("Error al eliminar un producto.");
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    return StatusCode(500, "Error al eliminar el producto: " + ex.Message);
-            //}
+        //    if (isDeleted)
+        //    {
+        //        return Ok("El producto se ha eliminado correctamente.");
+        //    }
+        //    else
+        //    {
+        //        return BadRequest("Error al eliminar un producto.");
+        //    }
+        //}
+        //catch (Exception ex)
+        //{
+        //    return StatusCode(500, "Error al eliminar el producto: " + ex.Message);
+        //}
         //}
     }
 }

@@ -8,32 +8,53 @@ namespace Data
     public class ServiceContext : DbContext
     {
         public ServiceContext(DbContextOptions<ServiceContext> options) : base(options) { }
-        public DbSet<ProductItem> ProductItems { get; set; }
-        public DbSet<OrderItem> OrderItems { get; set; }
-        public DbSet<UserItem> UserItems { get; set; }
-        public DbSet<OrderProduct> OrderProduct { get; set; }
+        public DbSet<ProductItem> Products { get; set; }          //Products это имя используется в Services, также это имя БД     
+        public DbSet<OrderItem> Orders { get; set; }
+        public DbSet<UserItem> Users { get; set; }
+        public DbSet<RolItem> UserRol { get; set; }
+        public DbSet<OrderProduct> OrderProducts { get; set; }
 
     
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<OrderItem>()
+                .HasKey(o => o.OrderId);
+
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(o => o.Users)
+                .WithMany(u => u.Order)
+                .HasForeignKey(o => o.UsuarioId);
+
+
             modelBuilder.Entity<OrderProduct>()
                 .HasKey(op => op.Id);
 
             modelBuilder.Entity<OrderProduct>()
-                .HasOne(op => op.UserItem)
-                .WithMany()
-                .HasForeignKey(op => op.UsuarioId);
-
-            modelBuilder.Entity<OrderProduct>()
                 .HasOne(op => op.OrderItem)
-                .WithMany()
+                .WithMany(o => o.OrderProduct)
                 .HasForeignKey(op => op.OrderId);
 
             modelBuilder.Entity<OrderProduct>()
                 .HasOne(op => op.ProductItem)
-                .WithMany()
+                .WithMany(p => p.OrderProduct)
                 .HasForeignKey(op => op.ProductId);
 
+
+            modelBuilder.Entity<ProductItem>()
+                .HasKey(op => op.ProductId);
+
+
+            modelBuilder.Entity<RolItem>()
+                .HasKey(op => op.RolId);
+
+
+            modelBuilder.Entity<UserItem>()
+                .HasKey(op => op.UsuarioId);
+
+            modelBuilder.Entity<UserItem>()
+                 .HasOne(u => u.UserRol) // UserItem и UserRol, используется навигационное свойство
+                 .WithMany(ur => ur.User)
+                 .HasForeignKey(u => u.RolId);
         }
     }
     public class ServiceContextFactory : IDesignTimeDbContextFactory<ServiceContext>

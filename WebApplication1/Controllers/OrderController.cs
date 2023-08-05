@@ -15,70 +15,70 @@ namespace WebApplication1.Controllers
     public class OrderController : ControllerBase
     {
         private readonly ServiceContext _serviceContext;
-        private readonly IProductService _productService;
+        private readonly IOrderService _orderService;
 
-        public OrderController(IProductService productService, ServiceContext serviceContext)
+        public OrderController(IOrderService orderService, ServiceContext serviceContext)
         {
             _serviceContext = serviceContext;
-            _productService = productService;
+            _orderService = orderService;
         }
 
         // Añadir pedidos
-        //[HttpPost("Order/Post", Name = "InsertOrder")]
-        //public IActionResult CreateOrder(ushort productId, [FromBody] OrderItem orderItem, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
-        //{
-        //    var seletedUser = _serviceContext.Set<UserItem>()
-        //                            .Where(u => u.NombreUsuario == userNombreUsuario
-        //                                && u.Contraseña == userContraseña)
-        //                            .FirstOrDefault();
+        [HttpPost(Name = "InsertOrder")]
+        public IActionResult CreateOrder(int productId, [FromBody] OrderItem orderItem, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
+        {
 
-        //    if (seletedUser != null)
-        //    {
-        //        if (orderItem != null)
-        //        {
-        //            // Проверяем, есть ли у заказа уже IdOrder, и если есть, проверяем, что такой заказ не существует в базе данных
-        //            if (orderItem.IdOrder != 0)
-        //            {
-        //                var existingOrder = _serviceContext.Orders.FirstOrDefault(o => o.IdOrder == orderItem.IdOrder);
-        //                if (existingOrder != null)
-        //                {
-        //                    return BadRequest("Order with the specified IdOrder already exists.");
-        //                }
-        //            }
+                if (orderItem != null)
+                {
+                    //// Проверяем, есть ли у заказа уже IdOrder, и если есть, проверяем, что такой заказ не существует в базе данных
+                    //if (orderItem.OrderId != 0)
+                    //{
+                    //    var existingOrder = _serviceContext.OrderItems.FirstOrDefault(o => o.OrderId == orderItem.OrderId);
+                    //    if (existingOrder != null)
+                    //    {
+                    //        return BadRequest("Order with the specified IdOrder already exists.");
+                    //    }
+                    //}
 
-        //            // Добавляем заказ в контекст данных
-        //            _serviceContext.Orders.Add(orderItem);
+                    // Добавляем заказ в контекст данных
+                    _serviceContext.Orders.Add(orderItem);
 
-        //            // Журналирование действия создания заказа
-        //            _serviceContext.AuditLogs.Add(new AuditLog
-        //            {
-        //                Action = "Insert",
-        //                TableName = "Orders",
-        //                RecordId = orderItem.IdOrder,
-        //                Timestamp = DateTime.Now,
-        //                UserId = seletedUser.IdUsuario
-        //            });
+                    // Журналирование действия создания заказа
+                    //_serviceContext.AuditLogs.Add(new AuditLog
+                    //{
+                    //    Action = "Insert",
+                    //    TableName = "Orders",
+                    //    RecordId = orderItem.OrderId,
+                    //    Timestamp = DateTime.Now,
+                    //    UserId = seletedUser.IdUsuario
+                    //});
 
-        //            // Сохраняем изменения в базе данных
-        //            _serviceContext.SaveChanges();
+                    // Сохраняем изменения в базе данных
+                    _serviceContext.SaveChanges();
 
-        //            return Ok("El pedido se ha creado correctamente.");
-        //        }
-        //        else
-        //        {
-        //            return NotFound("No se ha encontrado el pedido con el identificador especificado.");
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return Unauthorized("El usuario no está autorizado o no existe");
-        //    }
-        //}
+                // Создаем запись в таблице OrderProduct для установления связей между заказом, продуктом и пользователем
+                    _serviceContext.OrderProducts.Add(new OrderProduct
+                    {
+                        OrderId = orderItem.OrderId,
+                        ProductId = productId,
+                        //UserId = seletedUser.UsuarioId // Вам нужно получить соответствующего пользователя из базы данных
+                    });
+
+                // Сохраняем изменения в базе данных
+                _serviceContext.SaveChanges();
+
+                return Ok("El pedido se ha creado correctamente.");
+                }
+                else
+                {
+                    return NotFound("No se ha encontrado el pedido con el identificador especificado.");
+                }
+        }
 
 
         //recuperación de pedidos de la tabla Ordens por Id
 
-        [HttpPost("Order/Post", Name = "InsertOrder")]
+        //[HttpPost("Order/Post", Name = "InsertOrder")]
 
 
 
@@ -167,40 +167,7 @@ namespace WebApplication1.Controllers
 
 
         // Modificar registros de la tabla Orders
-        [HttpPut("Order/UpdateOrder", Name = "UpdateOrder")]
-        public IActionResult UpdateOrder(ushort orderId, [FromBody] OrderItem updatedOrder, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
-        {
-            var seletedUser = _serviceContext.Set<UserItem>()
-                                   .Where(u => u.NombreUsuario == userNombreUsuario
-                                        && u.Contraseña == userContraseña)
-                                    .FirstOrDefault();
 
-            if (seletedUser != null)
-            {
-                var order = _serviceContext.Orders.FirstOrDefault(o => o.OrderId == orderId);
-
-                if (order != null)
-                {
-                    // Журналирование действия обновления заказа
-                    //_serviceContext.AuditLogs.Add(new AuditLog
-                    //{
-                    //    Action = "Update",
-                    //    TableName = "Orders",
-                    //    RecordId = orderId,
-                    //    Timestamp = DateTime.Now,
-                    //    UserId = seletedUser.IdUsuario // Добавляем информацию о UserId в AuditLog
-                    //});
-                    // Actualización de los valores de los campos del pedido utilizando datos del updatedOrder
-                    order.CustomerName = updatedOrder.CustomerName;
-                    order.ProductStock = updatedOrder.ProductStock;
-
-                    _serviceContext.SaveChanges();
-
-                    return Ok("El pedido se ha actualizado correctamente.");
-                }
-                else
-                {
-      
 
 
         //eliminar una orden de la tabla Orders по Id

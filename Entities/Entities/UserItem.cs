@@ -13,16 +13,23 @@ namespace Entities.Entities
         public int UsuarioId { get; set; }
 
         [Required]
-        public string NombreUsuario { get; set; }
+        public string? NombreUsuario { get; set; }
 
         [Required]
-        public int IdRol { get; set; }
+        public int? RolId { get; set; }
 
         [Required]
-        public string Contraseña { get; set; }
+        public string? Contraseña { get; set; }
 
         [Required]
-        public string Email { get; set; }
+        public string? Email { get; set; }
+
+        [JsonIgnore]
+        public virtual ICollection<OrderItem>? Order { get; set; }      //один пользователь может иметь много заказов.
+
+        [JsonIgnore]
+        public virtual RolItem? UserRol { get; set; } // UserRol может быть связан только с одним User
+
 
     }
 }
