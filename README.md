@@ -40,6 +40,7 @@ This project aimed to create a database and a REST API. Its goal is to develop a
 5. Compile the code from Microsoft Visual Studio 2022.
 6. Create, modify, and delete content in Swagger.
 7. View the stored data in the SQL Server tables.
+8. Once installed, in Swagger, to add content, you need to enter the Administrator 1 query: Username (Equipo 1) and password (BootCamp).
 
 ## File Structure 📁
 **1. API or Database:**
