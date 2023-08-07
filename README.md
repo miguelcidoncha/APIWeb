@@ -6,6 +6,8 @@ This project aimed to create a database and a REST API. Its goal is to develop a
 
 ## Screenshots 📷
 
+<img src="Campturas BootCamp/Captura de pantalla 2023-08-07 091818.png" width="250" height="200"> <img src="Campturas BootCamp/Captura de pantalla 2023-08-07 092315.png" width="250" height="200"> <img src="Campturas BootCamp/Captura de pantalla 2023-08-07 092334.png" width="250" height="200"><img src="Campturas BootCamp/Captura de pantalla 2023-08-07 092508.png" width="250" height="200"><img src="Campturas BootCamp/Captura de pantalla 2023-08-07 092523.png" width="250" height="200"><img src="Campturas BootCamp/Captura de pantalla 2023-08-07 092604.png" width="250" height="200"><img src="Campturas BootCamp/Captura de pantalla 2023-08-07 092621.png" width="250" height="200"><img src="Campturas BootCamp/Captura de pantalla 2023-08-07 094407.png" width="250" height="200"><img src="Campturas BootCamp/Captura de pantalla 2023-08-07 094428.png" width="250" height="200"><img src="Campturas BootCamp/Captura de pantalla 2023-08-07 094438.png" width="250" height="200"><img src="Campturas BootCamp/Captura de pantalla 2023-08-07 094851.png" width="250" height="200"><img src="Campturas BootCamp/Captura de pantalla 2023-08-07 094856.png" width="250" height="200"><img src="Campturas BootCamp/Captura de pantalla 2023-08-07 095203.png" width="250" height="200"><img src="Campturas BootCamp/Captura de pantalla 2023-08-07 100057.png" width="250" height="200"><img src="Campturas BootCamp/Captura de pantalla 2023-08-07 100838.png" width="250" height="200"><img src="Campturas BootCamp/Captura de pantalla 2023-08-07 100854.png" width="250" height="200">
+
 
 ## Stacks 🖥️
 ● Microsoft Visual Studio 2022 <br>
