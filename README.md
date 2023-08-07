@@ -25,7 +25,10 @@ This project aimed to create a database and a REST API. Its goal is to develop a
 <a href="https://docs.microsoft.com/en-us/dotnet/csharp/" target="_blank"><img style="margin: 10px" src="https://profilinator.rishav.dev/skills-assets/csharp-original.svg" alt="C#" height="50" /></a>  
 <a href="https://www.mysql.com/" target="_blank"><img style="margin: 10px" src="https://profilinator.rishav.dev/skills-assets/mysql-original-wordmark.svg" alt="MySQL" height="50" /></a>  
 <a href="https://dotnet.microsoft.com/download" target="_blank"><img style="margin: 10px" src="https://profilinator.rishav.dev/skills-assets/dotnetcore.png" alt=".Net Core" height="50" /></a>  
+ <a href="https://swagger.io" target="_blank"><img style="margin: 10px" src="https://avatars0.githubusercontent.com/u/7658037?v=3&s=200" alt="swagger" height="50" /></a>  
 </div>
+
+
 
 ## Installation Process ⬆️
 
