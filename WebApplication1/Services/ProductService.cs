@@ -1,5 +1,5 @@
 ﻿using Data;
-using Entities;
+using Entities.Entities;
 using WebApplication1.IServices;
 
 namespace WebApplication1.Services
@@ -10,11 +10,20 @@ namespace WebApplication1.Services
         {
         }
 
-        public int insertProduct(ProductItem productItem)
+        public int InsertProduct(ProductItem productItem)
         {
             _serviceContext.Products.Add(productItem);
             _serviceContext.SaveChanges();
-            return productItem.Id;
+            return productItem.ProductId;
         }
+        //public List<ProductItem> GetProductsInOrder(int orderId)
+        //{
+        //    var productsInOrder = _serviceContext.OrderProduct
+        //        .Where(op => op.OrderId == orderId)
+        //        .Select(op => op.Product)
+        //        .ToList();
+
+        //    return productsInOrder;
+        //}
     }
 }
