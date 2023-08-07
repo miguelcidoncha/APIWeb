@@ -1,4 +1,7 @@
-<img src="Campturas BootCamp/Captura de pantalla 2023-08-07 100403.png" style="float: left; margin-right: 10px;" width="350" height="200">
+<p align="center">
+  <img src="Campturas BootCamp/Captura de pantalla 2023-08-07 100403.png" width="450" height="250">
+</p>
+
 
 ## Project Description 🚀
 
