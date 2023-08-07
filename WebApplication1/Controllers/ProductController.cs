@@ -44,11 +44,7 @@ namespace WebApplication1.Controllers
                     // Выполняем добавление продукта
                     int productId = _productService.InsertProduct(productItem);
 
-
-                    // Сохраняем изменения в базе данных
-                    _serviceContext.SaveChanges();
-
-                    return Ok(productId); // Возвращаем статус 200 OK с данными productId
+                    return Ok("El producto " + productId + "añadido"); // Возвращаем статус 200 OK с данными productId
                 }
                 else
                 {

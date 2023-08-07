@@ -24,7 +24,7 @@ namespace Entities.Entities
         [Required]
         public string? Email { get; set; }
 
-        public float? Discont { get; set; }
+        public float Discount { get; set; }
 
 
         [JsonIgnore]

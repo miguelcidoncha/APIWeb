@@ -16,19 +16,19 @@ namespace WebApplication1.Controllers
     {
         private readonly ServiceContext _serviceContext;
         private readonly IOrderService _orderService;
-        private readonly IProductService _productService;
+        //private readonly IProductService _productService;
 
         public OrderController(IOrderService orderService, IProductService productService, ServiceContext serviceContext)
         {
             _serviceContext = serviceContext;
             _orderService = orderService;
-            _productService = productService;
+            //_productService = productService;
 
         }
 
         // Añadir pedidos
         [HttpPost(Name = "InsertOrder")]
-        public IActionResult CreateOrder([FromBody] OrderItem orderItem, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
+        public IActionResult CreateOrder([FromBody] OrderItem orderItem, [FromBody] OrderDetal orderDetal, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
         {
             var selectedUser = _serviceContext.Set<UserItem>()
             .Where(u => u.NombreUsuario == userNombreUsuario && u.Contraseña == userContraseña 
@@ -65,22 +65,25 @@ namespace WebApplication1.Controllers
                     //});
 
                     // Сохраняем изменения в базе данных
-                    _serviceContext.SaveChanges();
+                    //_serviceContext.SaveChanges(); это уже есть в сервисе, поэтому закоментарено
 
-                // Создаем запись в таблице OrderProduct для установления связей между заказом, продуктом и пользователем
-                    _serviceContext.OrderDetal.Add(new OrderDetal
-                    {
-                        OrderId = orderItem.OrderId,
-                        ProductId = productItem.ProductId,
-                        UsuarioId = selectedUser.UsuarioId,
-                        ProductStock =
-                        TotalPrice =
-                    }); 
+                    // Создаем запись в таблице OrderProduct для установления связей между заказом, продуктом и пользователем
+
+                    int detalId = _orderService.InsertDetal(orderDetal);
+
+                    //_serviceContext.OrderDetal.Add(new OrderDetal
+                    //{
+                    //    OrderId = orderItem.OrderId,
+                    //    //ProductId = productItem.ProductId,
+                    //    UsuarioId = selectedUser.UsuarioId,
+                    //    //ProductStock =
+                    //    //TotalPrice =
+                    //}); 
 
                 // Сохраняем изменения в базе данных
-                _serviceContext.SaveChanges();
+                //_serviceContext.SaveChanges();
 
-                return Ok(orderId);
+                return Ok(orderId, detalId);
                 }
                 else
                 {
@@ -91,6 +94,11 @@ namespace WebApplication1.Controllers
             {
                 return BadRequest("Usuario no autorizado o no encontrado");
             }
+        }
+
+        private IActionResult Ok(int orderId, int detalId)
+        {
+            throw new NotImplementedException();
         }
 
 

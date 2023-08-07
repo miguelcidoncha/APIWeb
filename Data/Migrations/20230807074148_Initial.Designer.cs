@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(ServiceContext))]
-    [Migration("20230805171725_Initial")]
+    [Migration("20230807074148_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -25,34 +25,7 @@ namespace Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Entities.Entities.OrderItem", b =>
-                {
-                    b.Property<int>("OrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
-
-                    b.Property<DateTime>("DateOrder")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductStock")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UsuarioId")
-                        .HasColumnType("int");
-
-                    b.HasKey("OrderId");
-
-                    b.HasIndex("UsuarioId");
-
-                    b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("Entities.Entities.OrderProduct", b =>
+            modelBuilder.Entity("Entities.Entities.OrderDetal", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -66,13 +39,48 @@ namespace Data.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
+                    b.Property<int>("ProductStock")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalPrice")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderProducts");
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("OrderDetal");
+                });
+
+            modelBuilder.Entity("Entities.Entities.OrderItem", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
+
+                    b.Property<DateTime>("DateOrder")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OrderNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrderId");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("Entities.Entities.ProductItem", b =>
@@ -87,6 +95,7 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ProductName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ProductStock")
@@ -125,6 +134,9 @@ namespace Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<float>("Discount")
+                        .HasColumnType("real");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -144,34 +156,42 @@ namespace Data.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Entities.Entities.OrderItem", b =>
-                {
-                    b.HasOne("Entities.Entities.UserItem", "Users")
-                        .WithMany("Order")
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("Entities.Entities.OrderProduct", b =>
+            modelBuilder.Entity("Entities.Entities.OrderDetal", b =>
                 {
                     b.HasOne("Entities.Entities.OrderItem", "OrderItem")
-                        .WithMany("OrderProduct")
+                        .WithMany("OrderDetal")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Entities.Entities.ProductItem", "ProductItem")
-                        .WithMany("OrderProduct")
+                        .WithMany("OrderDetal")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Entities.Entities.UserItem", "UserItem")
+                        .WithMany("OrderDetal")
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("OrderItem");
 
                     b.Navigation("ProductItem");
+
+                    b.Navigation("UserItem");
+                });
+
+            modelBuilder.Entity("Entities.Entities.OrderItem", b =>
+                {
+                    b.HasOne("Entities.Entities.UserItem", "Users")
+                        .WithMany("Order")
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Entities.Entities.UserItem", b =>
@@ -179,7 +199,7 @@ namespace Data.Migrations
                     b.HasOne("Entities.Entities.RolItem", "UserRol")
                         .WithMany("User")
                         .HasForeignKey("RolId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("UserRol");
@@ -187,12 +207,12 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Entities.Entities.OrderItem", b =>
                 {
-                    b.Navigation("OrderProduct");
+                    b.Navigation("OrderDetal");
                 });
 
             modelBuilder.Entity("Entities.Entities.ProductItem", b =>
                 {
-                    b.Navigation("OrderProduct");
+                    b.Navigation("OrderDetal");
                 });
 
             modelBuilder.Entity("Entities.Entities.RolItem", b =>
@@ -203,6 +223,8 @@ namespace Data.Migrations
             modelBuilder.Entity("Entities.Entities.UserItem", b =>
                 {
                     b.Navigation("Order");
+
+                    b.Navigation("OrderDetal");
                 });
 #pragma warning restore 612, 618
         }

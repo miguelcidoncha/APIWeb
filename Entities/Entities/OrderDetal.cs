@@ -22,7 +22,6 @@ namespace Entities.Entities
         public virtual ProductItem? ProductItem { get; set; }
         public virtual UserItem? UserItem { get; set; }
 
-
     }
 
 }

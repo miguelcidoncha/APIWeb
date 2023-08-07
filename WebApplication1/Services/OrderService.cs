@@ -16,5 +16,12 @@ namespace WebApplication1.Services
             _serviceContext.SaveChanges();
             return orderItem.OrderId;
         }
+
+        public int InsertDetal(OrderDetal orderDetal)
+        {
+            _serviceContext.OrderDetal.Add(orderDetal);
+            _serviceContext.SaveChanges();
+            return orderDetal.Id;
+        }
     }
 }

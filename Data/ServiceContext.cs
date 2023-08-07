@@ -23,7 +23,8 @@ namespace Data
             modelBuilder.Entity<OrderItem>()
                 .HasOne(o => o.Users)
                 .WithMany(u => u.Order)
-                .HasForeignKey(o => o.UsuarioId);
+                .HasForeignKey(o => o.UsuarioId)
+                .OnDelete(DeleteBehavior.Restrict);
 
 
             modelBuilder.Entity<OrderDetal>()
@@ -32,17 +33,20 @@ namespace Data
             modelBuilder.Entity<OrderDetal>()
                 .HasOne(op => op.OrderItem)
                 .WithMany(o => o.OrderDetal)
-                .HasForeignKey(op => op.OrderId);
+                .HasForeignKey(op => op.OrderId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<OrderDetal>()
                 .HasOne(op => op.ProductItem)
                 .WithMany(p => p.OrderDetal)
-                .HasForeignKey(op => op.ProductId);
+                .HasForeignKey(op => op.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<OrderDetal>()
                 .HasOne(op => op.UserItem)
                 .WithMany(p => p.OrderDetal)
-                .HasForeignKey(op => op.UsuarioId);
+                .HasForeignKey(op => op.UsuarioId)
+                .OnDelete(DeleteBehavior.Restrict);
 
 
             modelBuilder.Entity<ProductItem>()
@@ -59,7 +63,9 @@ namespace Data
             modelBuilder.Entity<UserItem>()
                  .HasOne(u => u.UserRol) // UserItem и UserRol, используется навигационное свойство
                  .WithMany(ur => ur.User)
-                 .HasForeignKey(u => u.RolId);
+                 .HasForeignKey(u => u.RolId)
+                 .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
     public class ServiceContextFactory : IDesignTimeDbContextFactory<ServiceContext>
