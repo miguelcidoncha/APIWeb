@@ -71,7 +71,7 @@ appsettings.json is a configuration file in which various settings for the appli
 The "Program" refers to the entry point of the application. In the context of an API, this is where the application is configured and started. Swagger is a tool that provides documentation and testing capabilities for APIs. In the "Program" file, the API may be configured to integrate with Swagger, allowing developers and users to easily explore and interact with the API's endpoints.
 
 ## Next Steps 🔜
-For the future,we would like to be able to add images to visually complement the products added. It would also be interesting to differentiate between types of customers/users, whether they are individuals or businesses/companies. Allowing users to create a profile to access various promotions or discounts would be beneficial as well. Similarly, we aim to configure the SQL Server to send purchase confirmations to users via email. Lastly, we plan to work on the front-end to create a web page that replaces the Swagger interface and link it with the database.
+For the future, we would like to be able to add images to visually complement the products added. It would also be interesting to differentiate between types of customers/users, whether they are individuals or businesses/companies. Allowing users to create a profile to access various promotions or discounts would be beneficial as well. Similarly, we aim to configure the SQL Server to send purchase confirmations to users via email. Lastly, we plan to work on the front-end to create a web page that replaces the Swagger interface and link it with the database.
 
 ## Authors 👨‍💻👩‍💻
 
