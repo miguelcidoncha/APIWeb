@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="Campturas BootCamp/Captura de pantalla 2023-08-07 100403.png" width="450" height="250">
+  <img src="Campturas BootCamp/Captura de pantalla 2023-08-07 100403.png" width="600" height="250">
 </p>
 
 
