@@ -13,6 +13,7 @@ This project aimed to create a database and a REST API. Its goal is to develop a
 ● Microsoft Visual Studio 2022 <br>
 ● SQL Server <br>
 ● C# <br>
+● Swagger <br>
 ● GitHub <br>
 ● Trello <br>
 ● Slack <br>
