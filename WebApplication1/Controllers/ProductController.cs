@@ -52,7 +52,7 @@ namespace WebApplication1.Controllers
                 }
                 else
                 {
-                    return BadRequest("Usuario no autorizado o no encontrado"); // Возвращаем сообщение об ошибке
+                    return BadRequest("Usuario no autorizado o no encontrado");
                 }
             }
             catch (Exception ex)

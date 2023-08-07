@@ -17,7 +17,7 @@ namespace Entities.Entities
         public int ProductStock { get; set; }
 
         [JsonIgnore]
-        public virtual ICollection<OrderProduct>? OrderProduct { get; set; }
+        public virtual ICollection<OrderDetal>? OrderDetal { get; set; }    //один продукт может быть во многих заказах
 
     }
 

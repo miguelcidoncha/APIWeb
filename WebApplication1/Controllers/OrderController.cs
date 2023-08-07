@@ -16,32 +16,43 @@ namespace WebApplication1.Controllers
     {
         private readonly ServiceContext _serviceContext;
         private readonly IOrderService _orderService;
+        private readonly IProductService _productService;
 
-        public OrderController(IOrderService orderService, ServiceContext serviceContext)
+        public OrderController(IOrderService orderService, IProductService productService, ServiceContext serviceContext)
         {
             _serviceContext = serviceContext;
             _orderService = orderService;
+            _productService = productService;
+
         }
 
         // Añadir pedidos
         [HttpPost(Name = "InsertOrder")]
-        public IActionResult CreateOrder(int productId, [FromBody] OrderItem orderItem, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
+        public IActionResult CreateOrder([FromBody] OrderItem orderItem, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
         {
+            var selectedUser = _serviceContext.Set<UserItem>()
+            .Where(u => u.NombreUsuario == userNombreUsuario && u.Contraseña == userContraseña 
+            && u.RolId == 1).FirstOrDefault();
+
+            if (selectedUser != null)
+            {
 
                 if (orderItem != null)
                 {
-                    //// Проверяем, есть ли у заказа уже IdOrder, и если есть, проверяем, что такой заказ не существует в базе данных
-                    //if (orderItem.OrderId != 0)
-                    //{
-                    //    var existingOrder = _serviceContext.OrderItems.FirstOrDefault(o => o.OrderId == orderItem.OrderId);
-                    //    if (existingOrder != null)
-                    //    {
-                    //        return BadRequest("Order with the specified IdOrder already exists.");
-                    //    }
-                    //}
+                //// Проверяем, есть ли у заказа уже IdOrder, и если есть, проверяем, что такой заказ не существует в базе данных
+                //if (orderItem.OrderId != 0)
+                //{
+                //    var existingOrder = _serviceContext.OrderItems.FirstOrDefault(o => o.OrderId == orderItem.OrderId);
+                //    if (existingOrder != null)
+                //    {
+                //        return BadRequest("Order with the specified IdOrder already exists.");
+                //    }
+                //}
 
-                    // Добавляем заказ в контекст данных
-                    _serviceContext.Orders.Add(orderItem);
+                // Добавляем заказ в контекст данных
+                int orderId = _orderService.InsertOrder(orderItem);
+                //_serviceContext.Orders.Add(orderItem);
+
 
                     // Журналирование действия создания заказа
                     //_serviceContext.AuditLogs.Add(new AuditLog
@@ -57,22 +68,29 @@ namespace WebApplication1.Controllers
                     _serviceContext.SaveChanges();
 
                 // Создаем запись в таблице OrderProduct для установления связей между заказом, продуктом и пользователем
-                    _serviceContext.OrderProducts.Add(new OrderProduct
+                    _serviceContext.OrderDetal.Add(new OrderDetal
                     {
                         OrderId = orderItem.OrderId,
-                        ProductId = productId,
-                        //UserId = seletedUser.UsuarioId // Вам нужно получить соответствующего пользователя из базы данных
-                    });
+                        ProductId = productItem.ProductId,
+                        UsuarioId = selectedUser.UsuarioId,
+                        ProductStock =
+                        TotalPrice =
+                    }); 
 
                 // Сохраняем изменения в базе данных
                 _serviceContext.SaveChanges();
 
-                return Ok("El pedido se ha creado correctamente.");
+                return Ok(orderId);
                 }
                 else
                 {
                     return NotFound("No se ha encontrado el pedido con el identificador especificado.");
                 }
+            }
+            else
+            {
+                return BadRequest("Usuario no autorizado o no encontrado");
+            }
         }
 
 

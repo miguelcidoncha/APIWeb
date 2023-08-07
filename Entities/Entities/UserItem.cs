@@ -31,6 +31,9 @@ namespace Entities.Entities
         public virtual ICollection<OrderItem>? Order { get; set; }      //один пользователь может иметь много заказов.
 
         [JsonIgnore]
+        public virtual ICollection<OrderDetal>? OrderDetal { get; set; }
+
+        [JsonIgnore]
         public virtual RolItem? UserRol { get; set; } // UserRol может быть связан только с одним User
 
 

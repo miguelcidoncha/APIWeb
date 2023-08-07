@@ -12,7 +12,7 @@ namespace Data
         public DbSet<OrderItem> Orders { get; set; }
         public DbSet<UserItem> Users { get; set; }
         public DbSet<RolItem> UserRol { get; set; }
-        public DbSet<OrderProduct> OrderProducts { get; set; }
+        public DbSet<OrderDetal> OrderDetal { get; set; }
 
     
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -26,18 +26,23 @@ namespace Data
                 .HasForeignKey(o => o.UsuarioId);
 
 
-            modelBuilder.Entity<OrderProduct>()
+            modelBuilder.Entity<OrderDetal>()
                 .HasKey(op => op.Id);
 
-            modelBuilder.Entity<OrderProduct>()
+            modelBuilder.Entity<OrderDetal>()
                 .HasOne(op => op.OrderItem)
-                .WithMany(o => o.OrderProduct)
+                .WithMany(o => o.OrderDetal)
                 .HasForeignKey(op => op.OrderId);
 
-            modelBuilder.Entity<OrderProduct>()
+            modelBuilder.Entity<OrderDetal>()
                 .HasOne(op => op.ProductItem)
-                .WithMany(p => p.OrderProduct)
+                .WithMany(p => p.OrderDetal)
                 .HasForeignKey(op => op.ProductId);
+
+            modelBuilder.Entity<OrderDetal>()
+                .HasOne(op => op.UserItem)
+                .WithMany(p => p.OrderDetal)
+                .HasForeignKey(op => op.UsuarioId);
 
 
             modelBuilder.Entity<ProductItem>()
