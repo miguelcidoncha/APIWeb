@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Entities;
 using System.IO;
 using System.Reflection.Emit;
+using Entities.Entities;
 
 namespace Data
 {
@@ -18,9 +18,12 @@ namespace Data
         public DbSet<ProductItem> Products { get; set; }
         public DbSet<UserItem> Users { get; set; }
         public DbSet<RollItem> RollUser { get; set; }
-        public DbSet<OrderItem> Orders { get; set; } //Добавляем DbSet для заказов
-        public DbSet<AuditLog> AuditLogs { get; set; } //Добавляем DbSet для логирования
-        public DbSet<OrderStatus> OrderStatuses { get; set; } //Добавляем DbSet состояние заказа
+        public DbSet<OrderItem> Orders { get; set; }
+        public DbSet<AuditLog> AuditLogs { get; set; }
+        public DbSet<OrderStatus> OrderStatuses { get; set; }
+        public DbSet<ImageItem> Images { get; set; }
+        public DbSet<OrderProduct> OrderProduct { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -29,6 +32,20 @@ namespace Data
             {
                 entity.ToTable("Products");
                 entity.HasKey(p => p.ProductId);
+
+                entity.HasMany(p => p.OrderProduct)       // Навигационное свойство для связи с промежуточной моделью OrderProduct
+                .WithOne(op => op.Product)
+                .HasForeignKey(op => op.ProductId);
+
+                entity.HasMany(p => p.ImageItem)
+                .WithOne(i => i.Product)
+                .HasForeignKey(i => i.ProductId);
+            });
+
+            builder.Entity<ImageItem>(entity =>    // Конфигурация таблицы "Images"
+            {
+                entity.ToTable("Images");
+                entity.HasKey(i => i.IdImage);
             });
 
             builder.Entity<UserItem>(entity =>             // Задаем связь с таблицей "Users" по идентификатору IdUsuario    
@@ -47,14 +64,40 @@ namespace Data
             builder.Entity<OrderItem>(entity =>             // Конфигурация модели OrderItem
             {
                 entity.ToTable("Orders");
-                entity.HasKey(o => o.IdOrder);
-                entity.HasOne(o => o.Product)               // Задаем связь с таблицей "Products" по идентификатору продукта
-                      .WithMany(p => p.Orders)
-                      .HasForeignKey(o => o.ProductId);
+                entity.HasKey(o => o.OrderId);
+
+                entity.HasMany(o => o.OrderProduct)
+                      .WithOne(op => op.Order)
+                      .HasForeignKey(op => op.OrderId);
+
                 entity.HasOne(o => o.OrderStatus)           // Задаем связь с таблицей OrderStatus по идентификатору состояния заказа
                     .WithMany()
                     .HasForeignKey(o => o.OrderStatusId)
                     .OnDelete(DeleteBehavior.NoAction); // Задаем правило удаления NO ACTION
+            });
+
+            // Конфигурация модели OrderProduct (промежуточной модели)
+            builder.Entity<OrderProduct>(entity =>
+            {
+                entity.ToTable("OrderProduct");
+                entity.HasKey(op => op.Id);
+
+                // Определение составного ключа
+                entity.HasIndex(op => new { op.OrderId, op.ProductId });
+
+                // Навигационные свойства для связи с моделями OrderItem и ProductItem
+                entity.HasOne(op => op.Order)
+                      .WithMany(o => o.OrderProduct)
+                      .HasForeignKey(op => op.OrderId);
+
+                entity.HasOne(op => op.Product)
+                      .WithMany(p => p.OrderProduct)
+                      .HasForeignKey(op => op.ProductId);
+
+                entity.HasOne(op => op.UserItem) // Настройка связи для IdUsuario
+                      .WithMany()
+                      .HasForeignKey(op => op.IdUsuario)
+                      .OnDelete(DeleteBehavior.NoAction);
             });
 
             builder.Entity<AuditLog>(entity =>              // Конфигурация модели AuditLog
@@ -95,7 +138,7 @@ namespace Data
         // Метод для удаления записи из таблицы "Orders" по идентификатору
         public bool RemoveOrderById(int orderId)
         {
-            var orderToRemove = Orders.FirstOrDefault(o => o.IdOrder == orderId);
+            var orderToRemove = Orders.FirstOrDefault(o => o.OrderId == orderId);
 
             if (orderToRemove != null)
             {

@@ -2,13 +2,13 @@
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Entities
+namespace Entities.Entities
 {
     public class AuditLog
     {
-        public ushort IdLog { get; set; }
-        public string Action { get; set; }
-        public string TableName { get; set; }
+        public int IdLog { get; set; }
+        public string? Action { get; set; }
+        public string? TableName { get; set; }
         public int RecordId { get; set; }
         //атрибут 'Column' для сокращения содержания строки
         [Column(TypeName = "datetime2")]

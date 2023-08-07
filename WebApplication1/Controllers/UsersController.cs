@@ -1,5 +1,5 @@
 ﻿using Data;
-using Entities;
+using Entities.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Authentication;
@@ -45,7 +45,7 @@ namespace WebApplication1.Controllers
                     Timestamp = DateTime.Now,
                     UserId = seletedUser.IdUsuario
                 });
-                return _userService.insertUsers(userItem);
+                return _userService.InsertUsers(userItem);
             }
             else
             {

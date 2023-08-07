@@ -22,7 +22,7 @@ namespace Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Entities.AuditLog", b =>
+            modelBuilder.Entity("Entities.Entities.AuditLog", b =>
                 {
                     b.Property<int>("IdLog")
                         .ValueGeneratedOnAdd()
@@ -31,20 +31,19 @@ namespace Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdLog"));
 
                     b.Property<string>("Action")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RecordId")
                         .HasColumnType("int");
 
                     b.Property<string>("TableName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.HasKey("IdLog");
@@ -54,13 +53,35 @@ namespace Data.Migrations
                     b.ToTable("AuditLog", (string)null);
                 });
 
-            modelBuilder.Entity("Entities.OrderItem", b =>
+            modelBuilder.Entity("Entities.Entities.ImageItem", b =>
                 {
-                    b.Property<int>("IdOrder")
+                    b.Property<int>("IdImage")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdOrder"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdImage"));
+
+                    b.Property<byte[]>("ImageData")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("IdImage");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Images", (string)null);
+                });
+
+            modelBuilder.Entity("Entities.Entities.OrderItem", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
                     b.Property<string>("CustomerName")
                         .IsRequired()
@@ -78,19 +99,42 @@ namespace Data.Migrations
                     b.Property<int>("ProductStock")
                         .HasColumnType("int");
 
-                    b.Property<double>("TotalPrice")
-                        .HasColumnType("float");
-
-                    b.HasKey("IdOrder");
+                    b.HasKey("OrderId");
 
                     b.HasIndex("OrderStatusId");
-
-                    b.HasIndex("ProductId");
 
                     b.ToTable("Orders", (string)null);
                 });
 
-            modelBuilder.Entity("Entities.OrderStatus", b =>
+            modelBuilder.Entity("Entities.Entities.OrderProduct", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("IdUsuario")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdUsuario");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("OrderId", "ProductId");
+
+                    b.ToTable("OrderProduct", (string)null);
+                });
+
+            modelBuilder.Entity("Entities.Entities.OrderStatus", b =>
                 {
                     b.Property<int>("OrderStatusId")
                         .ValueGeneratedOnAdd()
@@ -102,7 +146,6 @@ namespace Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("StatusName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("OrderStatusId");
@@ -110,7 +153,7 @@ namespace Data.Migrations
                     b.ToTable("OrderStatuses", (string)null);
                 });
 
-            modelBuilder.Entity("Entities.ProductItem", b =>
+            modelBuilder.Entity("Entities.Entities.ProductItem", b =>
                 {
                     b.Property<int>("ProductId")
                         .ValueGeneratedOnAdd()
@@ -121,9 +164,6 @@ namespace Data.Migrations
                     b.Property<string>("BrandName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Discount")
-                        .HasColumnType("float");
 
                     b.Property<string>("ProductColor")
                         .IsRequired()
@@ -160,7 +200,7 @@ namespace Data.Migrations
                     b.ToTable("Products", (string)null);
                 });
 
-            modelBuilder.Entity("Entities.RollItem", b =>
+            modelBuilder.Entity("Entities.Entities.RollItem", b =>
                 {
                     b.Property<int>("IdRoll")
                         .ValueGeneratedOnAdd()
@@ -177,7 +217,7 @@ namespace Data.Migrations
                     b.ToTable("RollUser", (string)null);
                 });
 
-            modelBuilder.Entity("Entities.UserItem", b =>
+            modelBuilder.Entity("Entities.Entities.UserItem", b =>
                 {
                     b.Property<int>("IdUsuario")
                         .ValueGeneratedOnAdd()
@@ -207,9 +247,9 @@ namespace Data.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("Entities.AuditLog", b =>
+            modelBuilder.Entity("Entities.Entities.AuditLog", b =>
                 {
-                    b.HasOne("Entities.UserItem", "User")
+                    b.HasOne("Entities.Entities.UserItem", "User")
                         .WithMany("AuditLogs")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -218,40 +258,77 @@ namespace Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Entities.OrderItem", b =>
+            modelBuilder.Entity("Entities.Entities.ImageItem", b =>
                 {
-                    b.HasOne("Entities.OrderStatus", "OrderStatus")
+                    b.HasOne("Entities.Entities.ProductItem", "Product")
+                        .WithMany("ImageItem")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Entities.Entities.OrderItem", b =>
+                {
+                    b.HasOne("Entities.Entities.OrderStatus", "OrderStatus")
                         .WithMany()
                         .HasForeignKey("OrderStatusId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Entities.ProductItem", "Product")
-                        .WithMany("Orders")
+                    b.Navigation("OrderStatus");
+                });
+
+            modelBuilder.Entity("Entities.Entities.OrderProduct", b =>
+                {
+                    b.HasOne("Entities.Entities.UserItem", "UserItem")
+                        .WithMany()
+                        .HasForeignKey("IdUsuario")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Entities.Entities.OrderItem", "Order")
+                        .WithMany("OrderProduct")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Entities.Entities.ProductItem", "Product")
+                        .WithMany("OrderProduct")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("OrderStatus");
+                    b.Navigation("Order");
 
                     b.Navigation("Product");
+
+                    b.Navigation("UserItem");
                 });
 
-            modelBuilder.Entity("Entities.UserItem", b =>
+            modelBuilder.Entity("Entities.Entities.UserItem", b =>
                 {
-                    b.HasOne("Entities.RollItem", null)
+                    b.HasOne("Entities.Entities.RollItem", null)
                         .WithMany()
                         .HasForeignKey("IdRol")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Entities.ProductItem", b =>
+            modelBuilder.Entity("Entities.Entities.OrderItem", b =>
                 {
-                    b.Navigation("Orders");
+                    b.Navigation("OrderProduct");
                 });
 
-            modelBuilder.Entity("Entities.UserItem", b =>
+            modelBuilder.Entity("Entities.Entities.ProductItem", b =>
+                {
+                    b.Navigation("ImageItem");
+
+                    b.Navigation("OrderProduct");
+                });
+
+            modelBuilder.Entity("Entities.Entities.UserItem", b =>
                 {
                     b.Navigation("AuditLogs");
                 });

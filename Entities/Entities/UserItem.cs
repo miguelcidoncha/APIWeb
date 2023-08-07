@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace Entities
+namespace Entities.Entities
 {
     public class UserItem
     {
@@ -16,7 +16,7 @@ namespace Entities
         public string NombreUsuario { get; set; }
 
         [Required]
-        public ushort IdRol { get; set; }
+        public int IdRol { get; set; }
 
         [Required]
         public string Contraseña { get; set; }

@@ -1,21 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
-namespace Entities
+namespace Entities.Entities
 {
     public class OrderItem
     {
-        public ushort IdOrder { get; set; }
+        public int OrderId { get; set; }
         public string CustomerName { get; set; }
-        public ushort ProductId { get; set; }
-
-        [ForeignKey("ProductId")]
-
-        [JsonIgnore]
-        public ProductItem Product { get; set; }
-
+        public int ProductId { get; set; }
         public int ProductStock { get; set; }
-        public double TotalPrice { get; set; }
         public DateTime DateOrder { get; set; }
         public int OrderStatusId { get; set; }
 
@@ -23,5 +16,14 @@ namespace Entities
 
         [JsonIgnore]
         public OrderStatus OrderStatus { get; set; }
+
+        [JsonIgnore]
+        public ICollection<OrderProduct> OrderProduct { get; set; }
+
+        public OrderItem()
+        {
+            // Инициализация коллекции OrderProduct
+            OrderProduct = new List<OrderProduct>();
+        }
     }
 }
