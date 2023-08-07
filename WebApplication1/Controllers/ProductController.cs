@@ -90,6 +90,7 @@ namespace WebApplication1.Controllers
                     .FirstOrDefault();
 
                 if (selectedUser != null)
+
                 {
                     // Выполняем добавление продукта
                     int productId = _productService.InsertProduct(productItem);
