@@ -209,6 +209,7 @@ namespace WebApplication1.Controllers
 
 
         // Modificar registros de la tabla Orders
+
         [HttpPut("Order/UpdateOrder", Name = "UpdateOrder")]
         public IActionResult UpdateOrder(ushort orderId, [FromBody] OrderItem updatedOrder, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
         {
@@ -254,7 +255,7 @@ namespace WebApplication1.Controllers
 
         //eliminar una orden de la tabla Orders по Id
         [HttpDelete("Order/Delete/{orderId}", Name = "DeleteOrder")]
-        public IActionResult Delete(ushort orderId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
+        public IActionResult Delete(int orderId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
         {
             var seletedUser = _serviceContext.Set<UserItem>()
                                    .Where(u => u.NombreUsuario == userNombreUsuario

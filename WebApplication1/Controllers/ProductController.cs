@@ -78,6 +78,7 @@ namespace WebApplication1.Controllers
 
         //Поиск по полю BrandName
         // Добавление продукта
+
         [HttpPost(Name = "InsertProduct")]
         public IActionResult InsertProduct([FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] ProductItem productItem)
         {
@@ -120,6 +121,8 @@ namespace WebApplication1.Controllers
                 return StatusCode(500, "Error al añadir el producto: " + ex.Message);
             }
         }
+
+
         [HttpGet("SearchByBrand", Name = "SearchProductByBrand")]
         public IActionResult SearchByBrand([FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromQuery] string brandName)
         {
@@ -127,8 +130,7 @@ namespace WebApplication1.Controllers
             {
                 var seletedUser = _serviceContext.Set<UserItem>()
                                        .FirstOrDefault(u => u.NombreUsuario == userNombreUsuario
-                                            && u.Contraseña == userContraseña
-                                            && u.IdRol == 1);
+                                            && u.Contraseña == userContraseña);
 
                 if (seletedUser == null)
                 {
@@ -155,61 +157,62 @@ namespace WebApplication1.Controllers
         }
 
 
-        [HttpGet("{id}", Name = "Insert-Product-Image")]
-        public IActionResult GetImage(ushort id)
-        {
-            var image = _serviceContext.Images.FirstOrDefault(i => i.IdImage == id);
-            if (image != null)
-            {
-                return File(image.ImageData, "image/jpeg"); // Возвращаем файл изображения
-            }
-            else
-            {
-                return NotFound("Imagen no encontrada");
-            }
-        }
+        //[HttpGet("{id}", Name = "Insert-Product-Image")]
+        //public IActionResult GetImage(ushort id)
+        //{
+        //    var image = _serviceContext.Images.FirstOrDefault(i => i.IdImage == id);
+        //    if (image != null)
+        //    {
+        //        return File(image.ImageData, "image/jpeg"); // Возвращаем файл изображения
+        //    }
+        //    else
+        //    {
+        //        return NotFound("Imagen no encontrada");
+        //    }
+        //}
 
-        [HttpPost]
-        public IActionResult UploadImage([FromForm] IFormFile file, [FromForm] ushort productId)
-        //public IActionResult UploadImage([FromBody] IFormFile file, [FromForm] ushort productId)
-        {
-            try
-            {
-                if (file == null || file.Length == 0)
-                {
-                    return BadRequest("Error al cargar el archivo");
-                }
+        //[HttpPost]
+        //public IActionResult UploadImage([FromForm] IFormFile file, [FromForm] ushort productId)
+        ////public IActionResult UploadImage([FromBody] IFormFile file, [FromForm] ushort productId)
+        //{
+        //    try
+        //    {
+        //        if (file == null || file.Length == 0)
+        //        {
+        //            return BadRequest("Error al cargar el archivo");
+        //        }
 
-                // Читаем данные файла в массив байтов
-                using (var memoryStream = new MemoryStream())
-                {
-                    file.CopyTo(memoryStream);
-                    var imageData = memoryStream.ToArray();
+        //        // Читаем данные файла в массив байтов
+        //        using (var memoryStream = new MemoryStream())
+        //        {
+        //            file.CopyTo(memoryStream);
+        //            var imageData = memoryStream.ToArray();
 
-                    // Создаем новую сущность ImageItem
-                    var image = new ImageItem
-                    {
-                        ImageData = imageData,
-                        ProductId = productId
-                    };
+        //            // Создаем новую сущность ImageItem
+        //            var image = new ImageItem
+        //            {
+        //                ImageData = imageData,
+        //                ProductId = productId
+        //            };
 
-                    // Добавляем изображение в таблицу Images
-                    _serviceContext.Images.Add(image);
-                    _serviceContext.SaveChanges();
+        //            // Добавляем изображение в таблицу Images
+        //            _serviceContext.Images.Add(image);
+        //            _serviceContext.SaveChanges();
 
-                    return Ok("La imagen se ha cargado y guardado correctamente");
-                }
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Error al cargar una imagen: " + ex.Message);
-            }
-        }
+        //            return Ok("La imagen se ha cargado y guardado correctamente");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, "Error al cargar una imagen: " + ex.Message);
+        //    }
+        //}
 
 
         // modificar registros de la tabla "Products"
+
         [HttpPut("{productId}", Name = "UpdateProduct")]
-        public IActionResult UpdateProduct(ushort productId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] ProductItem updatedProduct)
+        public IActionResult UpdateProduct(int productId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] ProductItem updatedProduct)
         {
             try
             {
@@ -237,7 +240,13 @@ namespace WebApplication1.Controllers
                         // Обновляем значения полей продукта с помощью данных из updatedProduct
                         product.ProductName = updatedProduct.ProductName;
                         product.BrandName = updatedProduct.BrandName;
+                        product.ProductModel = updatedProduct.ProductModel;
+                        product.TypeOfFootwear = updatedProduct.TypeOfFootwear;
+                        product.Recipient = updatedProduct.Recipient;
+                        product.ProductSize = updatedProduct.ProductSize;
+                        product.ProductColor = updatedProduct.ProductColor;
                         product.ProductStock = updatedProduct.ProductStock;
+                        product.ProductPrice = updatedProduct.ProductPrice;
 
                         _serviceContext.SaveChanges();
 
@@ -263,7 +272,7 @@ namespace WebApplication1.Controllers
         //eliminar un producto de la tabla Products по Id
         // Удалить запись из таблицы "Products"
         [HttpDelete("{productId}", Name = "DeleteProduct")]
-        public IActionResult Delete(ushort productId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
+        public IActionResult Delete(int productId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
         {
             try
             {
