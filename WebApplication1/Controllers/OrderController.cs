@@ -18,7 +18,7 @@ namespace WebApplication1.Controllers
         private readonly IOrderService _orderService;
         //private readonly IProductService _productService;
 
-        public OrderController(IOrderService orderService, IProductService productService, ServiceContext serviceContext)
+        public OrderController(IOrderService orderService, ServiceContext serviceContext)
         {
             _serviceContext = serviceContext;
             _orderService = orderService;
@@ -27,79 +27,55 @@ namespace WebApplication1.Controllers
         }
 
         // Añadir pedidos
-        [HttpPost(Name = "InsertOrder")]
-        public IActionResult CreateOrder([FromBody] OrderItem orderItem, [FromBody] OrderDetal orderDetal, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
-        {
-            var selectedUser = _serviceContext.Set<UserItem>()
-            .Where(u => u.NombreUsuario == userNombreUsuario && u.Contraseña == userContraseña 
-            && u.RolId == 1).FirstOrDefault();
+        //[HttpPost(Name = "InsertOrder")]
+        //public IActionResult CreateOrder([FromBody] OrderItem orderItem)
+        //{
 
-            if (selectedUser != null)
+
+
+        //        if (orderItem != null)
+        //        {
+        //            int orderId = _orderService.InsertOrder(orderItem);
+
+        //        return Ok(orderId);
+        //        }
+        //        else
+        //        {
+        //            return NotFound("No se ha encontrado el pedido con el identificador especificado.");
+        //        }
+
+        //}
+
+        [HttpPost(Name = "InsertOrder")]
+        public IActionResult CreateOrder([FromBody] OrderItem orderItem)
+        {
+            if (orderItem != null)
             {
 
-                if (orderItem != null)
-                {
-                //// Проверяем, есть ли у заказа уже IdOrder, и если есть, проверяем, что такой заказ не существует в базе данных
-                //if (orderItem.OrderId != 0)
-                //{
-                //    var existingOrder = _serviceContext.OrderItems.FirstOrDefault(o => o.OrderId == orderItem.OrderId);
-                //    if (existingOrder != null)
-                //    {
-                //        return BadRequest("Order with the specified IdOrder already exists.");
-                //    }
-                //}
 
-                // Добавляем заказ в контекст данных
                 int orderId = _orderService.InsertOrder(orderItem);
-                //_serviceContext.Orders.Add(orderItem);
 
-
-                    // Журналирование действия создания заказа
-                    //_serviceContext.AuditLogs.Add(new AuditLog
-                    //{
-                    //    Action = "Insert",
-                    //    TableName = "Orders",
-                    //    RecordId = orderItem.OrderId,
-                    //    Timestamp = DateTime.Now,
-                    //    UserId = seletedUser.IdUsuario
-                    //});
-
-                    // Сохраняем изменения в базе данных
-                    //_serviceContext.SaveChanges(); это уже есть в сервисе, поэтому закоментарено
-
-                    // Создаем запись в таблице OrderProduct для установления связей между заказом, продуктом и пользователем
-
-                    int detalId = _orderService.InsertDetal(orderDetal);
-
-                    //_serviceContext.OrderDetal.Add(new OrderDetal
-                    //{
-                    //    OrderId = orderItem.OrderId,
-                    //    //ProductId = productItem.ProductId,
-                    //    UsuarioId = selectedUser.UsuarioId,
-                    //    //ProductStock =
-                    //    //TotalPrice =
-                    //}); 
-
-                // Сохраняем изменения в базе данных
-                //_serviceContext.SaveChanges();
-
-                return Ok(orderId, detalId);
-                }
-                else
+                // Далее обработка продуктов, добавляемых к заказу
+                if (orderItem.OrderDetal != null && orderItem.OrderDetal.Any())
                 {
-                    return NotFound("No se ha encontrado el pedido con el identificador especificado.");
+                    foreach (var orderDetal in orderItem.OrderDetal)
+                    {
+                        // Привязываем OrderDetal к созданному заказу
+                        orderDetal.OrderId = orderId;
+
+                        // Добавляем OrderDetal
+                        _orderService.InsertDetal(orderDetal);
+                    }
                 }
+
+                return Ok(orderId);
             }
             else
             {
-                return BadRequest("Usuario no autorizado o no encontrado");
+                return NotFound("No se ha encontrado el pedido con el identificador especificado.");
             }
         }
 
-        private IActionResult Ok(int orderId, int detalId)
-        {
-            throw new NotImplementedException();
-        }
 
 
         //recuperación de pedidos de la tabla Ordens por Id

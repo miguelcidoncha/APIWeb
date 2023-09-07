@@ -23,5 +23,4 @@ namespace Entities.Entities
         public virtual UserItem? UserItem { get; set; }
 
     }
-
 }
