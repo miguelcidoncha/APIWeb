@@ -16,13 +16,11 @@ namespace WebApplication1.Controllers
     {
         private readonly ServiceContext _serviceContext;
         private readonly IOrderService _orderService;
-        //private readonly IProductService _productService;
 
         public OrderController(IOrderService orderService, ServiceContext serviceContext)
         {
             _serviceContext = serviceContext;
             _orderService = orderService;
-            //_productService = productService;
 
         }
 
@@ -189,6 +187,57 @@ namespace WebApplication1.Controllers
         //        return Unauthorized("El usuario no está autorizado o no existe");
         //    }
         //}
+        [HttpGet(Name = "GetAllOrders")]
+        public List<OrderItem> GetAll()
+        {
+            return _orderService.GetAllOrders();
+        }
+
+        [HttpDelete(Name = "DeleteOrder")]
+        public void Delete([FromQuery] int id)
+        {
+            _orderService.DeleteOrder(id);
+        }
+
+        [HttpGet(Name = "GetOrderById")]
+        public List<OrderItem> GetOrderById([FromQuery] int id)
+        {
+            return _orderService.GetOrderById(id);
+        }
+        [HttpPut(Name = "UpdateOrder")]
+        public IActionResult UpdateProduct(int OrderId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] OrderItem updatedOrder)
+        {
+            var seletedUser = _serviceContext.Set<UserItem>()
+                                   .Where(u => u.UserName == userNombreUsuario
+                                        && u.Contraseña == userContraseña
+                                        && u.Rol == "Admin")
+                                    .FirstOrDefault();
+
+            if (seletedUser != null)
+            {
+                var order = _serviceContext.Orders.FirstOrDefault(p => p.OrderId == OrderId);
+
+                if (order != null)
+                {
+                    order.OrderNumber = updatedOrder.OrderNumber;
+                    order.DateOrder = updatedOrder.DateOrder;
+                    order.DateExpiration = updatedOrder.DateExpiration;
+                    order.TotalPrice = updatedOrder.TotalPrice;
+
+                    _serviceContext.SaveChanges();
+
+                    return Ok("El order se ha actualizado correctamente.");
+                }
+                else
+                {
+                    return NotFound("No se ha encontrado el order con el identificador especificado.");
+                }
+            }
+            else
+            {
+                return Unauthorized("El usuario no está autorizado o no existe");
+            }
+        }
     }
 }
 

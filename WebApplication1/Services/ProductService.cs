@@ -17,5 +17,36 @@ namespace WebApplication1.Services
             return productItem.CourseId;
         }
 
+        public void DeleteProduct(int id)
+        {
+
+            var productToDelete = _serviceContext.Set<ProductItem>()
+                 .Where(u => u.CourseId == id).First();
+
+            _serviceContext.SaveChanges();
+
+        }
+
+        public List<ProductItem> GetAllProducts()
+        {
+            return _serviceContext.Set<ProductItem>()
+                .ToList();
+
+        }
+
+        public List<ProductItem> GetProductById(int id)
+        {
+            var resultList = _serviceContext.Set<ProductItem>()
+
+                                .Where(u => u.CourseId == id);
+
+
+            return resultList.ToList();
+        }
+        public void UpdateProduct(ProductItem productItem)
+        {
+            _serviceContext.Products.Update(productItem);
+            _serviceContext.SaveChanges();
+        }
     }
 }

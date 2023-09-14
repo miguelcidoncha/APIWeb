@@ -44,7 +44,7 @@ namespace WebApplication1.Controllers
                     // Выполняем добавление продукта
                     int productId = _productService.InsertProduct(productItem);
 
-                    return Ok("El producto " + productId + "añadido"); // Возвращаем статус 200 OK с данными productId
+                    return Ok("El producto " + productId + " añadido"); // Возвращаем статус 200 OK с данными productId
                 }
                 else
                 {
@@ -56,105 +56,73 @@ namespace WebApplication1.Controllers
                 return StatusCode(500, "Error al añadir el producto: " + ex.Message);
             }
         }
+     
 
 
 
-        // modificar registros de la tabla "Products"
-        //[HttpPut("{productId}", Name = "UpdateProduct")]
-        //public IActionResult UpdateProduct(ushort productId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] ProductItem updatedProduct)
-        //{
-        //    try
-        //    {
-        //        var seletedUser = _serviceContext.Set<UserItem>()
-        //                               .Where(u => u.NombreUsuario == userNombreUsuario
-        //                                    && u.Contraseña == userContraseña
-        //                                    && u.IdRol == 1)
-        //                                .FirstOrDefault();
-
-        //        if (seletedUser != null)
-        //        {
-        //            var product = _serviceContext.Products.FirstOrDefault(p => p.ProductId == productId);
-
-        //            if (product != null)
-        //            {
-
-        //                // Обновляем значения полей продукта с помощью данных из updatedProduct
-        //                product.ProductName = updatedProduct.ProductName;
-        //                product.BrandName = updatedProduct.BrandName;
-        //                product.ProductStock = updatedProduct.ProductStock;
-
-        //                _serviceContext.SaveChanges();
-
-        //                return Ok("El producto se ha actualizado correctamente.");
-        //            }
-        //            else
-        //            {
-        //                return NotFound("No se ha encontrado el producto con el identificador especificado.");
-        //            }
-        //        }
-        //        else
-        //        {
-        //            return Unauthorized("El usuario no está autorizado o no existe");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, "Error al actualizar el producto: " + ex.Message);
-        //    }
-        //}
+        [HttpGet(Name = "GetAllProducts")]
+        public List<ProductItem> GetAll()
+        {
+            return _productService.GetAllProducts();
+        }
 
 
         //eliminar un producto de la tabla Products по Id
-        // Удалить запись из таблицы "Products"
-        //[HttpDelete("{productId}", Name = "DeleteProduct")]
-        //public IActionResult Delete(ushort productId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
-        //{
-        //    try
-        //    {
-        //        var seletedUser = _serviceContext.Set<UserItem>()
-        //                               .FirstOrDefault(u => u.NombreUsuario == userNombreUsuario
-        //                                    && u.Contraseña == userContraseña
-        //                                    && u.IdRol == 1);
+        [HttpDelete(Name = "DeleteProduct")]
+        public void DeleteProduct(int id, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
+        {
+            var seletedUser = _serviceContext.Set<UserItem>()
+                                   .Where(u => u.UserName == userNombreUsuario
+                                        && u.Contraseña == userContraseña
+                                        && u.Rol == "Admin")
+                                    .FirstOrDefault();
 
+                {
+                _productService.DeleteProduct(id);
+            }
+        }
 
-        //        if (seletedUser == null)
-        //        {
-        //            return Unauthorized("El usuario no está autorizado o no existe");
-        //        }
+        [HttpGet(Name = "GetProductById")]
+        public List<ProductItem> GetProductById([FromQuery] int id)
+        {
+            return _productService.GetProductById(id);
+        }
 
-        //        var product = _serviceContext.Products.Find(productId);
+        //modificar registros de la tabla "Products"
+        [HttpPut(Name = "UpdateProduct")]
+        public IActionResult UpdateProduct(int CourseId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] ProductItem updatedProduct)
+        {
+            var seletedUser = _serviceContext.Set<UserItem>()
+                                   .Where(u => u.UserName == userNombreUsuario
+                                        && u.Contraseña == userContraseña
+                                        && u.Rol == "Admin")
+                                    .FirstOrDefault();
 
-        //        if (product == null)
-        //        {
-        //            return NotFound("No se ha encontrado el producto con el identificador especificado.");
-        //        }
+            if (seletedUser != null)
+            {
+                var product = _serviceContext.Products.FirstOrDefault(p => p.CourseId == CourseId);
 
-        //// Журналирование действия удаления продукта
-        //_serviceContext.AuditLogs.Add(new AuditLog
-        //{
-        //    Action = "Delete",
-        //    TableName = "Products",
-        //    RecordId = productId,
-        //    Timestamp = DateTime.Now,
-        //    UserId = seletedUser.IdUsuario // Добавляем информацию о UserId в AuditLog
-        //});
+                if (product != null)
+                {
+                    product.CourseName = updatedProduct.CourseName;
+                    product.CourseTeacher = updatedProduct.CourseTeacher;
+                    product.CourseTime = updatedProduct.CourseTime;
+                    product.CoverURL = updatedProduct.CoverURL;
 
-        // Вызываем метод для удаления продукта по идентификатору
-        //bool isDeleted = _serviceContext.RemoveProductById(productId);
+                    _serviceContext.SaveChanges();
 
-        //    if (isDeleted)
-        //    {
-        //        return Ok("El producto se ha eliminado correctamente.");
-        //    }
-        //    else
-        //    {
-        //        return BadRequest("Error al eliminar un producto.");
-        //    }
-        //}
-        //catch (Exception ex)
-        //{
-        //    return StatusCode(500, "Error al eliminar el producto: " + ex.Message);
-        //}
-        //}
+                    return Ok("El course se ha actualizado correctamente.");
+                }
+                else
+                {
+                    return NotFound("No se ha encontrado el course con el identificador especificado.");
+                }
+            }
+            else
+            {
+                return Unauthorized("El usuario no está autorizado o no existe");
+            }
+        }
     }
+
 }
