@@ -34,9 +34,9 @@ namespace WebApplication1.Controllers
             try
             {
                 var selectedUser = _serviceContext.Set<UserItem>()
-                    .Where(u => u.NombreUsuario == userNombreUsuario
+                    .Where(u => u.UserName == userNombreUsuario
                         && u.Contraseña == userContraseña
-                        && u.RolId == 1)
+                        && u.Rol == "Admin")
                     .FirstOrDefault();
 
                 if (selectedUser != null)

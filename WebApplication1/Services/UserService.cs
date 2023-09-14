@@ -14,7 +14,7 @@ namespace WebApplication1.Services
         {
             _serviceContext.Users.Add(userItem);
             _serviceContext.SaveChanges();
-            return userItem.UsuarioId;
+            return userItem.UserId;
         }
 
 
@@ -22,7 +22,7 @@ namespace WebApplication1.Services
         {
 
             var userToDelete = _serviceContext.Set<UserItem>()
-                 .Where(u => u.UsuarioId == id).First();
+                 .Where(u => u.UserId == id).First();
 
             _serviceContext.SaveChanges();
 
@@ -39,7 +39,7 @@ namespace WebApplication1.Services
         {
             var resultList = _serviceContext.Set<UserItem>()
 
-                                .Where(u => u.UsuarioId == id);
+                                .Where(u => u.UserId == id);
 
 
             return resultList.ToList();
@@ -47,13 +47,13 @@ namespace WebApplication1.Services
 
         public int InsertUser2(UserItem userItem)
         {
-            if (userItem.RolId == 1)
+            if (userItem.Rol == "Admin")
             {
                 throw new InvalidOperationException("Acción no autorizada");
             };
 
             var existingUser = _serviceContext.Set<UserItem>()
-                               .Where(u => u.NombreUsuario == userItem.NombreUsuario)
+                               .Where(u => u.UserName == userItem.UserName)
                                .FirstOrDefault();
             if (existingUser != null)
             {
@@ -64,7 +64,7 @@ namespace WebApplication1.Services
             _serviceContext.Users.Add(userItem);
             _serviceContext.SaveChanges();
 
-            return userItem.UsuarioId;
+            return userItem.UserId;
         }
 
         public void UpdateUser(UserItem userItem)

@@ -27,46 +27,15 @@ namespace WebApplication1.Controllers
         }
 
         // Añadir pedidos
-        //[HttpPost(Name = "InsertOrder")]
-        //public IActionResult CreateOrder([FromBody] OrderItem orderItem)
-        //{
-
-
-
-        //        if (orderItem != null)
-        //        {
-        //            int orderId = _orderService.InsertOrder(orderItem);
-
-        //        return Ok(orderId);
-        //        }
-        //        else
-        //        {
-        //            return NotFound("No se ha encontrado el pedido con el identificador especificado.");
-        //        }
-
-        //}
-
         [HttpPost(Name = "InsertOrder")]
         public IActionResult CreateOrder([FromBody] OrderItem orderItem)
         {
+
+
+
             if (orderItem != null)
             {
-
-
                 int orderId = _orderService.InsertOrder(orderItem);
-
-                // Далее обработка продуктов, добавляемых к заказу
-                if (orderItem.OrderDetal != null && orderItem.OrderDetal.Any())
-                {
-                    foreach (var orderDetal in orderItem.OrderDetal)
-                    {
-                        // Привязываем OrderDetal к созданному заказу
-                        orderDetal.OrderId = orderId;
-
-                        // Добавляем OrderDetal
-                        _orderService.InsertDetal(orderDetal);
-                    }
-                }
 
                 return Ok(orderId);
             }
@@ -74,7 +43,9 @@ namespace WebApplication1.Controllers
             {
                 return NotFound("No se ha encontrado el pedido con el identificador especificado.");
             }
+
         }
+
 
 
 

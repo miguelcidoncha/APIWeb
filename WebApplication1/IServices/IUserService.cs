@@ -8,7 +8,7 @@ namespace WebApplication1.IServices
         void UpdateUser(UserItem userItem);
         void DeleteUser(int id);
         List<UserItem> GetAllUsers();
-        List<UserItem> GetUsersById(int UsuarioId);
+        List<UserItem> GetUsersById(int UserId);
     }
 }
 

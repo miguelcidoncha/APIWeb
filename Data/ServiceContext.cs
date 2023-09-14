@@ -10,63 +10,31 @@ namespace Data
         public ServiceContext(DbContextOptions<ServiceContext> options) : base(options) { }
         public DbSet<ProductItem> Products { get; set; }          //Products это имя используется в Services, также это имя БД     
         public DbSet<OrderItem> Orders { get; set; }
+        public DbSet<ProductOrder> ProductOrder { get; set; }
         public DbSet<UserItem> Users { get; set; }
-        public DbSet<RolItem> UserRol { get; set; }
-        public DbSet<OrderDetal> OrderDetal { get; set; }
 
-    
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            modelBuilder.Entity<OrderItem>()
-                .HasKey(o => o.OrderId);
+            builder.Entity<ProductItem>(entity =>
+            {
+                entity.ToTable("Products");
+            });
 
-            modelBuilder.Entity<OrderItem>()
-                .HasOne(o => o.Users)
-                .WithMany(u => u.Order)
-                .HasForeignKey(o => o.UsuarioId)
-                .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<OrderItem>(entity =>
+            {
+                entity.ToTable("Orders");
+            });
 
+            builder.Entity<ProductOrder>(entity =>
+            {
+                entity.ToTable("ProductOrder");
+            });
 
-            modelBuilder.Entity<OrderDetal>()
-                .HasKey(op => op.Id);
-
-            modelBuilder.Entity<OrderDetal>()
-                .HasOne(op => op.OrderItem)
-                .WithMany(o => o.OrderDetal)
-                .HasForeignKey(op => op.OrderId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<OrderDetal>()
-                .HasOne(op => op.ProductItem)
-                .WithMany(p => p.OrderDetal)
-                .HasForeignKey(op => op.ProductId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<OrderDetal>()
-                .HasOne(op => op.UserItem)
-                .WithMany(p => p.OrderDetal)
-                .HasForeignKey(op => op.UsuarioId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-
-            modelBuilder.Entity<ProductItem>()
-                .HasKey(op => op.ProductId);
-
-
-            modelBuilder.Entity<RolItem>()
-                .HasKey(op => op.RolId);
-
-
-            modelBuilder.Entity<UserItem>()
-                .HasKey(op => op.UsuarioId);
-
-            modelBuilder.Entity<UserItem>()
-                 .HasOne(u => u.UserRol) // UserItem и UserRol, используется навигационное свойство
-                 .WithMany(ur => ur.User)
-                 .HasForeignKey(u => u.RolId)
-                 .OnDelete(DeleteBehavior.Restrict);
-
-        }
+            builder.Entity<UserItem>(entity =>
+            {
+                entity.ToTable("Users");
+            });
+        }   
     }
     public class ServiceContextFactory : IDesignTimeDbContextFactory<ServiceContext>
     {
