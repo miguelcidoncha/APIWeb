@@ -26,50 +26,21 @@ namespace WebApiEcommerce.Controllers
 
         // Añadir pedidos
         [HttpPost(Name = "InsertOrder")]
-        public IActionResult CreateOrder([FromBody] OrderItem orderItem)
+        public void CreateOrder([FromBody] OrderItem orderItem, [FromQuery] string NombreUsuario, [FromQuery] string Contraseña)
         {
-
-
-
-            if (orderItem != null)
-            {
+            var seletedUser = _serviceContext.Set<UserItem>()
+                                   .Where(u => u.UserName == NombreUsuario
+                                        && u.Contraseña == Contraseña
+                                        && u.Rol == "Admin")
+                                    .FirstOrDefault();
+                           
+                {
                 int orderId = _orderService.InsertOrder(orderItem);
-
-                return Ok(orderId);
-            }
-            else
-            {
-                return NotFound("No se ha encontrado el pedido con el identificador especificado.");
-            }
-
+                }
         }
 
 
 
-
-        //recuperación de pedidos de la tabla Ordens por Id
-
-        //[HttpPost("Order/Post", Name = "InsertOrder")]
-
-
-
-
-
-
-
-        //[HttpGet("Order/Get", Name = "GetOrder")]
-        //public IActionResult Get(ushort orderId)
-        //{
-        //    var order = _serviceContext.Orders.FirstOrDefault(p => p.OrderId == orderId);
-        //    if (order != null)
-        //    {
-        //        return Ok(order);
-        //    }
-        //    else
-        //    {
-        //        return NotFound("No se ha encontrado el pedido con el identificador especificado.");
-        //    }
-        //}
 
         //список всех продуктов в заказе по его Id
         //[HttpGet("GetProductsInOrder/orderId", Name = "GetProductsInOrder")]
@@ -137,7 +108,7 @@ namespace WebApiEcommerce.Controllers
         //}
 
 
-        
+
         [HttpGet(Name = "GetAllOrders")]
         public List<OrderItem> GetAll()
         {
@@ -157,7 +128,7 @@ namespace WebApiEcommerce.Controllers
 
 
         [HttpDelete(Name = "DeleteOrder")]
-        public void DeleteOrder(int id, [FromQuery] string NombreUsuario, [FromQuery] string Contraseña)
+        public void DeleteOrder([FromQuery] string NombreUsuario, [FromQuery] string Contraseña, int id)
         {
             var seletedUser = _serviceContext.Set<UserItem>()
                                    .Where(u => u.UserName == NombreUsuario
@@ -171,7 +142,7 @@ namespace WebApiEcommerce.Controllers
 
 
         [HttpPut(Name = "UpdateOrder")]
-        public IActionResult UpdateProduct(int OrderId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] OrderItem updatedOrder)
+        public IActionResult UpdateProduct([FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] OrderItem updatedOrder, int OrderId)
         {
             var seletedUser = _serviceContext.Set<UserItem>()
                                    .Where(u => u.UserName == userNombreUsuario

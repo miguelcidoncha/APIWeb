@@ -92,11 +92,11 @@ namespace WebApiEcommerce.Controllers
 
         //eliminar un producto de la tabla Products по Id
         [HttpDelete(Name = "DeleteProduct")]
-        public void DeleteProduct(int id, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
+        public void DeleteProduct([FromQuery] string NombreUsuario, [FromQuery] string Contraseña, int id)
         {
             var seletedUser = _serviceContext.Set<UserItem>()
-                                   .Where(u => u.UserName == userNombreUsuario
-                                        && u.Contraseña == userContraseña
+                                   .Where(u => u.UserName == NombreUsuario
+                                        && u.Contraseña == Contraseña
                                         && u.Rol == "Admin")
                                     .FirstOrDefault();
 
@@ -112,7 +112,7 @@ namespace WebApiEcommerce.Controllers
 
         //modificar registros de la tabla "Products"
         [HttpPut(Name = "UpdateProduct")]
-        public IActionResult UpdateProduct(int CourseId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] ProductItem updatedProduct)
+        public IActionResult UpdateProduct([FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] ProductItem updatedProduct, int CourseId)
         {
             var seletedUser = _serviceContext.Set<UserItem>()
                                    .Where(u => u.UserName == userNombreUsuario
