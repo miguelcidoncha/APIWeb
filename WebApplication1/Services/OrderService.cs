@@ -1,8 +1,8 @@
 ﻿using Data;
 using Entities.Entities;
-using WebApplication1.IServices;
+using WebApiEcommerce.IServices;
 
-namespace WebApplication1.Services
+namespace WebApiEcommerce.Services
 {
     public class OrderService : BaseContextService, IOrderService
     {

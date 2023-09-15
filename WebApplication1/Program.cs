@@ -1,7 +1,7 @@
 using Data;
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.IServices;
-using WebApplication1.Services;
+using WebApiEcommerce.IServices;
+using WebApiEcommerce.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,6 +1,6 @@
 ﻿using Entities.Entities;
 
-namespace WebApplication1.IServices
+namespace WebApiEcommerce.IServices
 {
     public interface IUserService
     {

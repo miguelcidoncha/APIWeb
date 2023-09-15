@@ -1,8 +1,8 @@
 ﻿using Data;
 using Entities.Entities;
-using WebApplication1.IServices;
+using WebApiEcommerce.IServices;
 
-namespace WebApplication1.Services
+namespace WebApiEcommerce.Services
 {
     public class UserService : BaseContextService, IUserService
     {
@@ -16,7 +16,6 @@ namespace WebApplication1.Services
             _serviceContext.SaveChanges();
             return userItem.UserId;
         }
-
 
         public void DeleteUser(int id)
         {
@@ -45,34 +44,33 @@ namespace WebApplication1.Services
             return resultList.ToList();
         }
 
-        public int InsertUser2(UserItem userItem)
-        {
-            if (userItem.Rol == "Admin")
-            {
-                throw new InvalidOperationException("Acción no autorizada");
-            };
+        //public int InsertUser2(UserItem userItem)
+        //{
+        //    if (userItem.Rol == "Admin")
+        //    {
+        //        throw new InvalidOperationException("Acción no autorizada");
+        //    };
 
-            var existingUser = _serviceContext.Set<UserItem>()
-                               .Where(u => u.UserName == userItem.UserName)
-                               .FirstOrDefault();
-            if (existingUser != null)
-            {
-                throw new InvalidOperationException("El nombre de usuario ya existe");
-            };
+        //    var existingUser = _serviceContext.Set<UserItem>()
+        //                       .Where(u => u.UserName == userItem.UserName)
+        //                       .FirstOrDefault();
+        //    if (existingUser != null)
+        //    {
+        //        throw new InvalidOperationException("El nombre de usuario ya existe");
+        //    };
 
 
-            _serviceContext.Users.Add(userItem);
-            _serviceContext.SaveChanges();
+        //    _serviceContext.Users.Add(userItem);
+        //    _serviceContext.SaveChanges();
 
-            return userItem.UserId;
-        }
+        //    return userItem.UserId;
+        //}
 
         public void UpdateUser(UserItem userItem)
         {
             _serviceContext.Users.Update(userItem);
             _serviceContext.SaveChanges();
         }
-
 
     }
 }

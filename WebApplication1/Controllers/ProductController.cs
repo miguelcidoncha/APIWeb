@@ -3,13 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Authentication;
 using Microsoft.EntityFrameworkCore;
 using System.Web.Http.Cors;
-using WebApplication1.IServices;
-using WebApplication1.Services;
+using WebApiEcommerce.IServices;
+using WebApiEcommerce.Services;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
 using Entities.Entities;
 
-namespace WebApplication1.Controllers
+namespace WebApiEcommerce.Controllers
 {
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     [Route("[controller]/[action]")]
@@ -61,10 +61,33 @@ namespace WebApplication1.Controllers
 
 
         [HttpGet(Name = "GetAllProducts")]
-        public List<ProductItem> GetAll()
+        public List<ProductItem> GetAllProducts([FromQuery] string NombreUsuario, [FromQuery] string Contraseña)
         {
-            return _productService.GetAllProducts();
+            var seletedUser = _serviceContext.Set<UserItem>()
+                               .Where(u => u.UserName == NombreUsuario
+                                    && u.Contraseña == Contraseña
+                                    && u.Rol == "Admin")
+                                .FirstOrDefault();
+
+            {
+                return _productService.GetAllProducts();
+            }
         }
+
+        [HttpGet(Name = "GetProductById")]
+        public List<ProductItem> GetProductById([FromQuery] string NombreUsuario, [FromQuery] string Contraseña, [FromQuery] int id)
+        {
+            var seletedUser = _serviceContext.Set<UserItem>()
+                               .Where(u => u.UserName == NombreUsuario
+                                    && u.Contraseña == Contraseña
+                                    && u.Rol == "Admin")
+                                .FirstOrDefault();
+            {
+                return _productService.GetProductById(id);
+            }
+        }
+
+
 
 
         //eliminar un producto de la tabla Products по Id
@@ -82,11 +105,10 @@ namespace WebApplication1.Controllers
             }
         }
 
-        [HttpGet(Name = "GetProductById")]
-        public List<ProductItem> GetProductById([FromQuery] int id)
-        {
-            return _productService.GetProductById(id);
-        }
+
+
+
+
 
         //modificar registros de la tabla "Products"
         [HttpPut(Name = "UpdateProduct")]

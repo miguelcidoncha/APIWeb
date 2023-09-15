@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Authentication;
 using Microsoft.EntityFrameworkCore;
 using System.Web.Http.Cors;
-using WebApplication1.IServices;
-using WebApplication1.Services;
+using WebApiEcommerce.IServices;
+using WebApiEcommerce.Services;
 using Entities.Entities;
 
-namespace WebApplication1.Controllers
+namespace WebApiEcommerce.Controllers
 {
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     [Route("[controller]/[action]")]
@@ -137,73 +137,39 @@ namespace WebApplication1.Controllers
         //}
 
 
-        // Modificar registros de la tabla Orders
-
-
-
-        //eliminar una orden de la tabla Orders по Id
-        //[HttpDelete("Order/Delete/{orderId}", Name = "DeleteOrder")]
-        //public IActionResult Delete(ushort orderId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña)
-        //{
-        //    var seletedUser = _serviceContext.Set<UserItem>()
-        //                           .Where(u => u.NombreUsuario == userNombreUsuario
-        //                                && u.Contraseña == userContraseña)
-        //                           .FirstOrDefault();
-
-        //    if (seletedUser != null)
-        //    {
-        //        // Журналирование действия удаления заказа
-        //        _serviceContext.AuditLogs.Add(new AuditLog
-        //        {
-        //            Action = "Delete",
-        //            TableName = "Orders",
-        //            RecordId = orderId,
-        //            Timestamp = DateTime.Now,
-        //            UserId = seletedUser.IdUsuario // Добавляем информацию о UserId в AuditLog
-        //        });
-        //        var order = _serviceContext.Orders.Find(orderId);
-
-        //        if (order != null)
-        //        {
-        //            // Llamar al método para eliminar un pedido por identificador
-        //            bool isDeleted = _serviceContext.RemoveOrderById(orderId);
-
-        //            if (isDeleted)
-        //            {
-        //                return Ok("El pedido se ha eliminado correctamente.");
-        //            }
-        //            else
-        //            {
-        //                return BadRequest("Error al eliminar el pedido.");
-        //            }
-        //        }
-        //        else
-        //        {
-        //            return NotFound("No se ha encontrado el pedido con el identificador especificado.");
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return Unauthorized("El usuario no está autorizado o no existe");
-        //    }
-        //}
+        
         [HttpGet(Name = "GetAllOrders")]
         public List<OrderItem> GetAll()
         {
             return _orderService.GetAllOrders();
         }
 
-        [HttpDelete(Name = "DeleteOrder")]
-        public void Delete([FromQuery] int id)
-        {
-            _orderService.DeleteOrder(id);
-        }
+
+
+
 
         [HttpGet(Name = "GetOrderById")]
         public List<OrderItem> GetOrderById([FromQuery] int id)
         {
             return _orderService.GetOrderById(id);
         }
+
+
+
+        [HttpDelete(Name = "DeleteOrder")]
+        public void DeleteOrder(int id, [FromQuery] string NombreUsuario, [FromQuery] string Contraseña)
+        {
+            var seletedUser = _serviceContext.Set<UserItem>()
+                                   .Where(u => u.UserName == NombreUsuario
+                                        && u.Contraseña == Contraseña
+                                        && u.Rol == "Admin")
+                                    .FirstOrDefault();
+            {
+                _orderService.DeleteOrder(id);
+            }
+        }
+
+
         [HttpPut(Name = "UpdateOrder")]
         public IActionResult UpdateProduct(int OrderId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] OrderItem updatedOrder)
         {

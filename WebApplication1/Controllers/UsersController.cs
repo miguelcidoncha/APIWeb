@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Authentication;
 using System.Web.Http.Cors;
-using WebApplication1.IServices;
-using WebApplication1.Services;
+using WebApiEcommerce.IServices;
+using WebApiEcommerce.Services;
 
-namespace WebApplication1.Controllers
+namespace WebApiEcommerce.Controllers
 {
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     [Route("[controller]/[action]")]
@@ -28,11 +28,11 @@ namespace WebApplication1.Controllers
         [HttpPost(Name = "InsertUser")]
 
         //Unidad de verificación de los derechos de acceso
-        public int Post([FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] UserItem userItem)
+        public int Post([FromQuery] string NombreUsuario, [FromQuery] string Contraseña, [FromBody] UserItem userItem)
         {
             var seletedUser = _serviceContext.Set<UserItem>()
-                               .Where(u => u.UserName == userNombreUsuario
-                                    && u.Contraseña == userContraseña
+                               .Where(u => u.UserName == NombreUsuario
+                                    && u.Contraseña == Contraseña
                                     && u.Rol == "Admin")
                                 .FirstOrDefault();
             if ( seletedUser != null)
@@ -48,56 +48,112 @@ namespace WebApplication1.Controllers
 
 
         [HttpGet(Name = "GetAllUsers")]
-        public List<UserItem> GetAll()
+        public List<UserItem> GetAllUsers([FromQuery] string NombreUsuario, [FromQuery] string Contraseña)
         {
-            return _userService.GetAllUsers();
+            var seletedUser = _serviceContext.Set<UserItem>()
+                               .Where(u => u.UserName == NombreUsuario
+                                    && u.Contraseña == Contraseña
+                                    && u.Rol == "Admin")
+                                .FirstOrDefault();
+
+            {
+                return _userService.GetAllUsers();
+            }
         }
 
         [HttpDelete(Name = "DeleteUser")]
-        public void Delete([FromQuery] int id)
+        public void Delete([FromQuery] string NombreUsuario, [FromQuery] string Contraseña, [FromQuery] int id)
         {
-            _userService.DeleteUser(id);
+            var seletedUser = _serviceContext.Set<UserItem>()
+                               .Where(u => u.UserName == NombreUsuario
+                                    && u.Contraseña == Contraseña
+                                    && u.Rol == "Admin")
+                                .FirstOrDefault();
+            {
+                _userService.DeleteUser(id);
+            }
         }
 
         [HttpGet(Name = "GetUsersById")]
-        public List<UserItem> GetUserById([FromQuery] int id)
-        {
-            return _userService.GetUsersById(id);
-        }
-
-        [HttpPut(Name = "UpdateUser")]
-        public IActionResult UpdateUser(int userId, [FromQuery] string userNombreUsuario, [FromQuery] string userContraseña, [FromBody] UserItem updatedUser)
+        public List<UserItem> GetUserById([FromQuery] string NombreUsuario, [FromQuery] string Contraseña, [FromQuery] int id)
         {
             var seletedUser = _serviceContext.Set<UserItem>()
-                                   .Where(u => u.UserName == userNombreUsuario
-                                        && u.Contraseña == userContraseña
+                               .Where(u => u.UserName == NombreUsuario
+                                    && u.Contraseña == Contraseña
+                                    && u.Rol == "Admin")
+                                .FirstOrDefault();
+                {
+                return _userService.GetUsersById(id);
+            }
+        }
+
+
+        [HttpPut(Name = "UpdateUser")]
+        public IActionResult UpdateUser(int userId, [FromQuery] string NombreUsuario, [FromQuery] string Contraseña, [FromBody] UserItem updatedUser)
+        {
+            var seletedUser = _serviceContext.Set<UserItem>()
+                                   .Where(u => u.UserName == NombreUsuario
+                                        && u.Contraseña == Contraseña
                                         && u.Rol == "Admin")
                                     .FirstOrDefault();
 
+            //if (seletedUser != null)
+            //{
+            //    var user = _serviceContext.Users.FirstOrDefault(p => p.UserId == userId);
+
+            //    if (user != null)
+            //    {
+            //        user.UserName = updatedUser.UserName;
+            //        user.Rol = updatedUser.Rol;
+            //        user.Contraseña = updatedUser.Contraseña;
+            //        user.Email = updatedUser.Email;
+
+            //        _serviceContext.SaveChanges();
+
+            //        return Ok("El ususario se ha actualizado correctamente.");
+            //    }
+            //    else
+            //    {
+            //        return NotFound("No se ha encontrado el usuario con el identificador especificado.");
+            //    }
+            //}
+            //else
+            //{
+            //    return Unauthorized("El usuario no está autorizado o no existe");
+            //}
             if (seletedUser != null)
             {
                 var user = _serviceContext.Users.FirstOrDefault(p => p.UserId == userId);
 
                 if (user != null)
                 {
-                    user.UserName = updatedUser.UserName;
-                    user.Rol = updatedUser.Rol;
-                    user.Contraseña = updatedUser.Contraseña;
-                    user.Email = updatedUser.Email;
+                    // Теперь вы можете обновить только те поля, которые необходимо изменить.
+                    // Например, если вы хотите обновить только UserName и Email:
+
+                    if (!string.IsNullOrEmpty(updatedUser.UserName))
+                    {
+                        user.UserName = updatedUser.UserName;
+                    }
+
+                    if (!string.IsNullOrEmpty(updatedUser.Email))
+                    {
+                        user.Email = updatedUser.Email;
+                    }
 
                     _serviceContext.SaveChanges();
 
-                    return Ok("El ususario se ha actualizado correctamente.");
+                    return Ok("Пользователь успешно обновлен.");
                 }
                 else
                 {
-                    return NotFound("No se ha encontrado el usuario con el identificador especificado.");
+                    return NotFound("Пользователь с указанным идентификатором не найден.");
                 }
             }
             else
             {
-                return Unauthorized("El usuario no está autorizado o no existe");
+                return Unauthorized("Пользователь не авторизован или не существует.");
             }
+
         }
 
 

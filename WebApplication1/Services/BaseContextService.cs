@@ -1,6 +1,6 @@
 ﻿using Data;
 
-namespace WebApplication1.Services
+namespace WebApiEcommerce.Services
 {
     public abstract class BaseContextService
     {
